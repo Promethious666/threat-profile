@@ -109,6 +109,34 @@
             <input id="technology" name="technology" type="text" placeholder="Citrix, VMware, Microsoft" autocomplete="off">
           </label>
 
+          <label>
+            <span>Dated evidence window <small>campaign, KEV and signal dates only</small></span>
+            <select id="evidence-window" name="evidence-window" aria-describedby="analysis-control-note">
+              <option value="7d">1 week</option>
+              <option value="14d">2 weeks</option>
+              <option value="1m">1 month</option>
+              <option value="3m">3 months</option>
+              <option value="6m">6 months</option>
+              <option value="12m">12 months</option>
+              <option value="24m" selected>24 months</option>
+              <option value="36m">36 months</option>
+              <option value="all">All available</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Analysis focus <small>recalculates downstream priorities</small></span>
+            <select id="focus-count" name="focus-count" aria-describedby="analysis-control-note">
+              <option value="5">Top 5</option>
+              <option value="10" selected>Top 10</option>
+              <option value="15">Top 15</option>
+              <option value="20">Top 20</option>
+              <option value="25">Top 25</option>
+            </select>
+          </label>
+
+          <p class="form-note" id="analysis-control-note">The time window never removes undated historical actor context. The focus limit drives techniques, software, campaigns, KQL priorities and exports; score ties at the boundary are always kept.</p>
+
           <button class="primary-button" id="analyse-button" type="submit" disabled>
             Build threat profile
             <span aria-hidden="true">→</span>
@@ -130,6 +158,8 @@
           <div>
             <div class="brief-labels">
               <span class="context-label" id="scope-badge">Profile relevance inference</span>
+              <span class="badge" id="window-badge">Evidence: 24 months</span>
+              <span class="badge" id="focus-badge">Focus: Top 10</span>
               <span class="muted" id="profile-date"></span>
             </div>
             <h2 id="profile-title" tabindex="-1"></h2>
@@ -179,6 +209,16 @@
             <p id="overview-scope"></p>
           </div>
           <div class="overview-grid">
+            <article class="work-card span-three signal-summary-card">
+              <div class="card-heading">
+                <div>
+                  <span class="card-kicker">Dated source signals</span>
+                  <h3>Current threat context</h3>
+                </div>
+                <a href="#actors" data-view-link="actors">Inspect evidence</a>
+              </div>
+              <div id="overview-signals" class="signal-summary-list"></div>
+            </article>
             <article class="work-card span-two">
               <div class="card-heading">
                 <div>
@@ -238,6 +278,17 @@
             </div>
             <p>Profile fit measures how discriminating the recorded sector and country context is. It is not likelihood or attribution confidence.</p>
           </div>
+
+          <section class="signal-panel" aria-labelledby="signals-heading">
+            <div class="section-title compact-title">
+              <div>
+                <p class="eyebrow">Current signals</p>
+                <h3 id="signals-heading">Dated, provenance-first context</h3>
+              </div>
+              <p id="current-signal-count" aria-live="polite"></p>
+            </div>
+            <div id="current-signal-list" class="signal-list"></div>
+          </section>
 
           <div class="filter-bar">
             <label>
@@ -390,6 +441,21 @@
               <span class="card-kicker">Detection content</span>
               <h3>Schema reviewed, tenant tested later</h3>
               <p>KQL tables and projected fields are reviewed against Microsoft Learn. Every hunt still requires data-availability checks, false-positive review and tenant tuning.</p>
+            </article>
+            <article class="work-card">
+              <span class="card-kicker">Scope controls</span>
+              <h3>Dated evidence and analytical focus</h3>
+              <p>The selected window applies only to source publication dates, ATT&amp;CK <code>last_seen</code> and CISA <code>dateAdded</code>. Top-N focus recalculates downstream priorities and retains all score ties.</p>
+            </article>
+            <article class="work-card">
+              <span class="card-kicker">Current signals</span>
+              <h3>Human-reviewed provenance</h3>
+              <p>The dated signal layer uses authoritative source claims with explicit entity types and caveats. It complements the historical score and never silently changes it.</p>
+            </article>
+            <article class="work-card">
+              <span class="card-kicker">Refresh model</span>
+              <h3>Automated where defensible</h3>
+              <p>ATT&amp;CK, MISP targeting context and CISA KEV refresh automatically every six hours through GitHub Actions. Current signals require human review; GitHub may pause schedules after 60 days without public-repository activity.</p>
             </article>
           </div>
 

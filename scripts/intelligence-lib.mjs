@@ -394,6 +394,44 @@ export function assertValidCombinedData(value) {
   if (errors.length) throw new Error(errors.join("; "));
 }
 
+export function validateCurrentSignals(value) {
+  const errors = [];
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+  const validDate = (date) => {
+    if (typeof date !== "string" || !datePattern.test(date)) return false;
+    const parsed = new Date(`${date}T00:00:00Z`);
+    return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === date;
+  };
+  const signals = Array.isArray(value?.signals) ? value.signals : [];
+
+  if (!value || typeof value !== "object") return ["current signals are not an object"];
+  if (value.schemaVersion !== 1) errors.push("current-signal schemaVersion must be 1");
+  if (!validDate(value.reviewedAt)) errors.push("current-signal reviewedAt must be a valid YYYY-MM-DD date");
+  if (signals.length < 3) errors.push("current-signal coverage is below 3");
+
+  const duplicateIds = duplicateValues(signals.map((signal) => signal.id));
+  if (duplicateIds.length) errors.push(`current signals contain duplicate IDs: ${duplicateIds.join(", ")}`);
+
+  for (const signal of signals) {
+    const prefix = signal?.id || "unnamed signal";
+    if (!/^[GS]\d{4}$/.test(signal?.entityId || "")) errors.push(`${prefix} has an invalid ATT&CK entity ID`);
+    if (!["threat-actor-group", "ransomware-family"].includes(signal?.entityType)) errors.push(`${prefix} has an invalid entity type`);
+    if (!validDate(signal?.publishedAt)) errors.push(`${prefix} needs a valid source publication date`);
+    if (validDate(value.reviewedAt) && validDate(signal?.publishedAt) && signal.publishedAt > value.reviewedAt) errors.push(`${prefix} is dated after review`);
+    if (!value?.evidenceTiers?.[signal?.evidenceTier]) errors.push(`${prefix} has an unknown evidence tier`);
+    if (!/^https:\/\//.test(signal?.source?.url || "")) errors.push(`${prefix} needs an HTTPS source`);
+    if ((signal?.sectorClaims?.length || 0) && (signal?.countryClaims?.length || 0) && signal.intersectionStatus !== "not-established") {
+      errors.push(`${prefix} must not imply an unproven sector-country intersection`);
+    }
+  }
+  return errors;
+}
+
+export function assertValidCurrentSignals(value) {
+  const errors = validateCurrentSignals(value);
+  if (errors.length) throw new Error(errors.join("; "));
+}
+
 export function sourceRecordCount(key, value) {
   return recordCount(key, value);
 }

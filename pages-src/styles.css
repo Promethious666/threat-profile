@@ -445,6 +445,18 @@ summary:focus-visible {
   gap: 14px;
 }
 
+.profile-form .primary-button,
+.form-note {
+  grid-column: 1 / -1;
+}
+
+.form-note {
+  margin: -2px 0 0;
+  color: var(--subtle);
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+
 label {
   display: grid;
   gap: 7px;
@@ -716,6 +728,10 @@ input::placeholder {
   grid-column: span 2;
 }
 
+.span-three {
+  grid-column: span 3;
+}
+
 .work-card,
 .model-card,
 .health-card,
@@ -798,6 +814,74 @@ input::placeholder {
 
 .plain-list li + li {
   margin-top: 7px;
+}
+
+.signal-panel {
+  margin: 4px 0 24px;
+  border: 1px solid rgba(89, 210, 174, 0.24);
+  border-radius: 14px;
+  background: rgba(13, 28, 37, 0.72);
+  padding: 18px;
+}
+
+.signal-list,
+.signal-summary-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.signal-summary-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.signal-card,
+.signal-summary-item {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--panel-deep);
+  padding: 14px;
+}
+
+.signal-card header,
+.signal-summary-item header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.signal-card h4,
+.signal-summary-item h4 {
+  margin: 10px 0 6px;
+}
+
+.signal-card p,
+.signal-summary-item p {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.signal-card footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  color: var(--subtle);
+  font-size: 0.74rem;
+}
+
+.signal-card details {
+  margin: 10px 0;
+}
+
+.signal-card .link-row a,
+.signal-summary-item a {
+  overflow-wrap: anywhere;
 }
 
 .filter-bar {
@@ -1323,7 +1407,7 @@ summary {
 
 .method-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   margin-top: 22px;
 }
@@ -1447,6 +1531,10 @@ summary {
     grid-column: span 2;
   }
 
+  .span-three {
+    grid-column: span 2;
+  }
+
   .split-workspace {
     grid-template-columns: minmax(0, 1fr) minmax(310px, 0.75fr);
   }
@@ -1482,11 +1570,14 @@ summary {
   .kev-grid,
   .health-grid,
   .method-grid,
-  .overview-grid {
+  .overview-grid,
+  .signal-list,
+  .signal-summary-list {
     grid-template-columns: 1fr;
   }
 
-  .span-two {
+  .span-two,
+  .span-three {
     grid-column: auto;
   }
 

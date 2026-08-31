@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-08-31",
+  "title": "Curated current threat signals",
+  "methodology": {
+    "purpose": "Small, dated, provenance-first signals that complement the undated historical targeting dataset.",
+    "datePolicy": "publishedAt is the source publication date. observedAt is null unless the source gives a defensible observation date for the claim. A source update date is metadata, not an incident date.",
+    "matchingPolicy": "Sector and country claims are independent dimensions. Do not infer that an entity targeted the selected sector in the selected country unless intersectionStatus is confirmed.",
+    "freshnessPolicy": "A recent publication or catalogue update is evidence recency, not proof that an intrusion is currently under way."
+  },
+  "evidenceTiers": {
+    "vendor-observed": "A named threat-intelligence provider describes activity it directly observed.",
+    "law-enforcement-assessed": "A law-enforcement authority reports an investigative or disruption assessment.",
+    "government-warning": "A government authority publishes a warning or defensive notice.",
+    "authoritative-catalogue": "An authoritative catalogue consolidates referenced public reporting and preserves entity classification."
+  },
+  "signals": [
+    {
+      "id": "ctp-2025-05-06-g1015-targeting",
+      "entityId": "G1015",
+      "entityName": "Scattered Spider",
+      "entityType": "threat-actor-group",
+      "aliases": [
+        "UNC3944",
+        "Roasted 0ktapus",
+        "Octo Tempest",
+        "Storm-0875"
+      ],
+      "publishedAt": "2025-05-06",
+      "observedAt": null,
+      "sourceUpdatedAt": null,
+      "dateBasis": "source-publication",
+      "evidenceTier": "vendor-observed",
+      "sectorClaims": [
+        {
+          "sector": "Financial Services",
+          "relationship": "reported-targeting-pattern",
+          "confidence": "high",
+          "claim": "Google Threat Intelligence Group lists financial services among the sectors on which UNC3944 has had a notable focus and reports a financial-services targeting wave in late 2023."
+        }
+      ],
+      "countryClaims": [
+        {
+          "countryCode": "GB",
+          "country": "United Kingdom",
+          "relationship": "reported-geographic-focus",
+          "confidence": "high",
+          "claim": "Google Threat Intelligence Group lists the United Kingdom among the English-speaking countries in UNC3944's primary geographical focus."
+        }
+      ],
+      "intersectionStatus": "not-established",
+      "summary": "Google Threat Intelligence Group describes UNC3944, which overlaps with public reporting on Scattered Spider, as a financially motivated actor with broad sector and English-speaking-country targeting patterns.",
+      "source": {
+        "name": "Google Threat Intelligence Group / Mandiant — Defending Against UNC3944",
+        "url": "https://cloud.google.com/blog/topics/threat-intelligence/unc3944-proactive-hardening-recommendations"
+      },
+      "entityReference": "https://attack.mitre.org/groups/G1015/",
+      "status": "historical-targeting-context",
+      "caveats": [
+        "The source's sector and country lists are aggregate patterns and do not establish a confirmed UK financial-services victim.",
+        "The publication noted a decline in activity after 2024 law-enforcement action; a later NCA disruption assessment is represented as a separate signal."
+      ]
+    },
+    {
+      "id": "ctp-2026-07-16-g1015-disruption",
+      "entityId": "G1015",
+      "entityName": "Scattered Spider",
+      "entityType": "threat-actor-group",
+      "aliases": [
+        "UNC3944",
+        "Roasted 0ktapus",
+        "Octo Tempest",
+        "Storm-0875"
+      ],
+      "publishedAt": "2026-07-16",
+      "observedAt": null,
+      "sourceUpdatedAt": null,
+      "dateBasis": "source-publication",
+      "evidenceTier": "law-enforcement-assessed",
+      "sectorClaims": [],
+      "countryClaims": [
+        {
+          "countryCode": "GB",
+          "country": "United Kingdom",
+          "relationship": "law-enforcement-disruption",
+          "confidence": "high",
+          "claim": "The UK National Crime Agency reports that action against two leading members severely disrupted the Scattered Spider threat."
+        }
+      ],
+      "intersectionStatus": "not-applicable",
+      "summary": "The UK National Crime Agency says arrests and convictions effectively halted the group's criminal activity and cites an independent Microsoft assessment that the arrests materially degraded its operational ability.",
+      "source": {
+        "name": "UK National Crime Agency — Two sentenced for hacking Transport for London",
+        "url": "https://www.nationalcrimeagency.gov.uk/news/two-sentenced-for-hacking-transport-for-london-in-uk-s-biggest-ever-cyber-crime-case"
+      },
+      "entityReference": "https://attack.mitre.org/groups/G1015/",
+      "status": "law-enforcement-assessed-disruption",
+      "caveats": [
+        "The NCA warns that other cybercriminals may continue to use the damaged Scattered Spider brand.",
+        "This is an operational-status signal, not evidence of current targeting of the financial-services sector."
+      ]
+    },
+    {
+      "id": "ctp-2026-05-15-g1057-government-warning",
+      "entityId": "G1057",
+      "entityName": "ShinyHunters",
+      "entityType": "threat-actor-group",
+      "aliases": [
+        "UNC6240",
+        "Bling Libra"
+      ],
+      "publishedAt": "2026-05-15",
+      "observedAt": null,
+      "sourceUpdatedAt": null,
+      "dateBasis": "source-publication",
+      "evidenceTier": "government-warning",
+      "sectorClaims": [
+        {
+          "sector": "Financial Services",
+          "relationship": "reported-targeting-pattern",
+          "confidence": "high",
+          "claim": "The FBI says ShinyHunters targets major companies across technology, finance and retail."
+        }
+      ],
+      "countryClaims": [],
+      "intersectionStatus": "not-applicable",
+      "summary": "An FBI public-service announcement describes ShinyHunters as a cybercriminal group specialising in large-scale data breaches and extortion and identifies finance as one of its target sectors.",
+      "source": {
+        "name": "FBI Internet Crime Complaint Center — ShinyHunters public-service announcement",
+        "url": "https://www.ic3.gov/PSA/2026/PSA260515"
+      },
+      "entityReference": "https://attack.mitre.org/groups/G1057/",
+      "status": "current-government-warning",
+      "caveats": [
+        "The FBI notice does not identify a confirmed UK financial-services victim.",
+        "The FBI cautions that threat actors may make real or exaggerated claims about access or stolen information.",
+        "ShinyHunters and Scattered Spider are separate ATT&CK groups; association with a broader criminal community does not make them aliases."
+      ]
+    },
+    {
+      "id": "ctp-2025-09-26-s1242-victimology",
+      "entityId": "S1242",
+      "entityName": "Qilin",
+      "entityType": "ransomware-family",
+      "aliases": [
+        "Agenda"
+      ],
+      "publishedAt": "2025-09-26",
+      "observedAt": null,
+      "sourceUpdatedAt": "2026-04-23",
+      "dateBasis": "catalogue-publication",
+      "evidenceTier": "authoritative-catalogue",
+      "sectorClaims": [
+        {
+          "sector": "Financial Services",
+          "relationship": "reported-affiliate-victimology",
+          "confidence": "medium",
+          "claim": "MITRE ATT&CK lists financial services among the primary sectors in aggregate reporting on Qilin affiliate victims."
+        }
+      ],
+      "countryClaims": [
+        {
+          "countryCode": "GB",
+          "country": "United Kingdom",
+          "relationship": "reported-affiliate-victimology",
+          "confidence": "medium",
+          "claim": "MITRE ATT&CK lists the United Kingdom among the countries containing the majority of victims in aggregate reporting on Qilin affiliates."
+        }
+      ],
+      "intersectionStatus": "not-established",
+      "summary": "MITRE ATT&CK classifies Qilin as malware: a ransomware family operated as ransomware-as-a-service, with affiliates responsible for victim targeting.",
+      "source": {
+        "name": "MITRE ATT&CK — Qilin (S1242)",
+        "url": "https://attack.mitre.org/software/S1242/"
+      },
+      "entityReference": "https://attack.mitre.org/software/S1242/",
+      "status": "catalogued-ransomware-family",
+      "caveats": [
+        "Qilin is ransomware used through a ransomware-as-a-service model, not a threat-actor identity.",
+        "The sector and country lists are aggregate dimensions and do not establish a confirmed UK financial-services victim.",
+        "The ATT&CK last-modified date records catalogue maintenance, not the date of an intrusion."
+      ]
+    }
+  ]
+}

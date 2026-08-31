@@ -27,6 +27,8 @@ Schema review is not tenant certification. Microsoft licensing, connectors, rete
 
 The catalogue therefore uses the status **Schema reviewed · Tenant validation required**. No query is labelled production-ready by default.
 
+The workbench's Top-N analysis focus changes which ATT&CK techniques—and therefore which mapped KQL starters—are prioritised. The dated evidence picker does **not** rewrite a query's own lookback. Evidence-publication recency and the operational time range inside a hunt are different controls and must remain separate.
+
 ## Safe promotion checklist
 
 1. Confirm the prerequisite product, connector and table contain recent data.

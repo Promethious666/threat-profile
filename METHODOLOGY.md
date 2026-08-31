@@ -32,9 +32,40 @@ Exact score ties use competition ranking (`1, 1, 3`) and a stable ATT&CK ID orde
 
 Sector and country attributes may come from different historical observations. Therefore every result explicitly sets joint targeting evidence to false; matching both dimensions is not a claim that the source observed them together.
 
+## Analysis focus
+
+The workbench first ranks every actor matching either profile dimension, then applies the analyst's Top 5, 10, 15, 20 or 25 focus. All actors sharing the score at the cutoff are retained. For example, a Top 10 selection may include 12 actors when three records share rank 10.
+
+The selected cohort—not merely the visible list—is then used to recalculate:
+
+- ATT&CK technique coverage and operational KQL priorities;
+- ATT&CK software coverage;
+- actor-linked campaign context; and
+- the actor choices available in the Diamond and Pyramid views.
+
+All other matched actors remain searchable for inspection and are included as candidates in the complete JSON export. They do not contribute to downstream priorities until the focus is widened.
+
+## Dated evidence windows
+
+The approved windows are 1 week, 2 weeks, 1 month, 3 months, 6 months, 12 months, 24 months, 36 months and all available. Day windows use fixed UTC days; month windows use calendar-month arithmetic. The intelligence snapshot's `generatedAt` date is the reproducible “as of” anchor, and the cutoff day is inclusive.
+
+The picker applies only where the source supplies a defensible date:
+
+- ATT&CK campaigns use `last_seen`;
+- CISA KEV records use `dateAdded`, which means catalogue addition—not exploitation date; and
+- curated current signals use `publishedAt`, which means source publication—not necessarily activity date.
+
+Undated targeting attributes and ATT&CK actor-to-technique/software relationships remain visible as historical context. “All available” means all valid dated records through the snapshot date; undated, invalid and future-dated records remain separately classified rather than being described as in-window. Empty states disclose excluded counts, and the complete JSON export retains the excluded records.
+
+## Current threat signals
+
+The curated signal layer complements, but never changes, the historical profile-fit score. A signal may match the selected sector, country or both. Sector and country claims are treated as independent unless the source explicitly confirms their intersection.
+
+Every signal records its entity type, authoritative source, evidence tier, source publication date, claim-level context and caveats. Threat actor groups and ransomware families are not conflated: Scattered Spider and ShinyHunters are group entities, while Qilin is represented as a ransomware family operated through a ransomware-as-a-service model. A recent publication is evidence recency, not proof of a currently active intrusion.
+
 ## Techniques and software
 
-ATT&CK techniques are aggregated across profile-matched actors. The technique score is the lower of:
+ATT&CK techniques are aggregated across the selected Top-N analysis focus. The technique score is the lower of:
 
 1. profile-fit-weighted actor coverage; and
 2. coverage after each actor's contribution is reduced by the square root of that actor's documented technique count.
@@ -45,7 +76,7 @@ The default defensive view excludes Reconnaissance and Resource Development from
 
 Software coverage is descriptive ATT&CK relationship context. It is not proof that a tool is currently in use.
 
-## Campaign recency
+## Campaign recency and scope
 
 Campaigns appear only when ATT&CK links them to a profile-matched actor. Profile fit and recency remain separate values.
 
@@ -56,6 +87,8 @@ recency = 100 × 2 ^ (−age in days / 730)
 ```
 
 Missing or future dates produce an unknown recency state. A recent date does not prove that a campaign is still active.
+
+The time picker then includes only campaigns whose valid `last_seen` falls inside the selected window. The two-year half-life remains a ranking aid within the linked campaign set; it does not override the analyst's chosen window.
 
 ## Vulnerability context
 
@@ -90,3 +123,5 @@ Normalisation retains assertion-level URLs where the upstream structured record 
 - **observation recency:** when the underlying activity was observed, if the source supplies that date.
 
 An undated historical targeting attribute does not become current simply because its source file was refreshed today.
+
+The automated refresh applies to ATT&CK, MISP Galaxy targeting context and CISA KEV. Current signals require human review before they enter the curated provenance file; the build validates their schema and deploys them with the other data.

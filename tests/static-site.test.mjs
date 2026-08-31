@@ -43,6 +43,21 @@ test("onboarding and local report export are present and privacy-labelled", () =
   assert.match(css, /@page/);
 });
 
+test("approved evidence-window and analysis-focus controls drive share and export scope", () => {
+  const windowSelect = html.match(/<select id="evidence-window"[\s\S]*?<\/select>/)?.[0] || "";
+  const focusSelect = html.match(/<select id="focus-count"[\s\S]*?<\/select>/)?.[0] || "";
+  assert.deepEqual([...windowSelect.matchAll(/<option value="([^"]+)"/g)].map((match) => match[1]), [
+    "7d", "14d", "1m", "3m", "6m", "12m", "24m", "36m", "all",
+  ]);
+  assert.deepEqual([...focusSelect.matchAll(/<option value="([^"]+)"/g)].map((match) => Number(match[1])), [5, 10, 15, 20, 25]);
+  assert.match(app, /searchParams\.set\("window"/);
+  assert.match(app, /searchParams\.set\("focus"/);
+  assert.match(app, /aggregateTechniques\(state\.focusActors/);
+  assert.match(app, /aggregateSoftware\(state\.focusActors/);
+  assert.match(app, /relevantCampaigns\(state\.intelligence\.campaigns, state\.focusActors/);
+  assert.match(app, /currentSignals:[\s\S]*allProfileMatches/);
+});
+
 test("all local entry assets exist", async () => {
   const references = [...html.matchAll(/(?:href|src)="\.\/([^"?#]+)"/g)].map((match) => match[1]);
   for (const reference of references) await access(resolve(root, "pages-src", reference));

@@ -13,6 +13,215 @@ const OPERATIONAL_TACTICS = new Set([
   "impact",
 ]);
 
+export const EVIDENCE_WINDOW_PRESETS = Object.freeze({
+  "7d": Object.freeze({ key: "7d", label: "1 week", days: 7 }),
+  "14d": Object.freeze({ key: "14d", label: "2 weeks", days: 14 }),
+  "1m": Object.freeze({ key: "1m", label: "1 month", months: 1 }),
+  "3m": Object.freeze({ key: "3m", label: "3 months", months: 3 }),
+  "6m": Object.freeze({ key: "6m", label: "6 months", months: 6 }),
+  "12m": Object.freeze({ key: "12m", label: "12 months", months: 12 }),
+  "24m": Object.freeze({ key: "24m", label: "24 months", months: 24 }),
+  "36m": Object.freeze({ key: "36m", label: "36 months", months: 36 }),
+  all: Object.freeze({ key: "all", label: "All available" }),
+});
+
+export const TOP_FOCUS_VALUES = Object.freeze([5, 10, 15, 20, 25]);
+
+const EVIDENCE_WINDOW_ALIASES = new Map([
+  ["7d", "7d"], ["7 days", "7d"], ["1w", "7d"], ["1 week", "7d"], ["week", "7d"],
+  ["14d", "14d"], ["14 days", "14d"], ["2w", "14d"], ["2 weeks", "14d"],
+  ["1m", "1m"], ["1 month", "1m"], ["month", "1m"],
+  ["3m", "3m"], ["3 months", "3m"],
+  ["6m", "6m"], ["6 months", "6m"],
+  ["12m", "12m"], ["12 months", "12m"], ["1y", "12m"], ["1 year", "12m"],
+  ["24m", "24m"], ["24 months", "24m"], ["2y", "24m"], ["2 years", "24m"],
+  ["36m", "36m"], ["36 months", "36m"], ["3y", "36m"], ["3 years", "36m"],
+  ["all", "all"], ["all available", "all"],
+]);
+
+function normaliseString(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ");
+}
+
+export function normalizeEvidenceWindowPreset(value, fallback = "24m") {
+  const candidate = typeof value === "object" && value !== null ? value.key : value;
+  const normalized = EVIDENCE_WINDOW_ALIASES.get(normaliseString(candidate));
+  if (normalized) return normalized;
+
+  const fallbackCandidate = typeof fallback === "object" && fallback !== null ? fallback.key : fallback;
+  return EVIDENCE_WINDOW_ALIASES.get(normaliseString(fallbackCandidate)) || "24m";
+}
+
+function parseDate(value) {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    const calendarDate = /^(\d{4})-(\d{2})-(\d{2})(?:$|T)/.exec(trimmed);
+    if (calendarDate) {
+      const [, year, month, day] = calendarDate.map(Number);
+      const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+      if (month < 1 || month > 12 || day < 1 || day > daysInMonth) return null;
+    }
+  }
+  const parsed = value instanceof Date ? new Date(value.getTime()) : new Date(value);
+  return Number.isFinite(parsed.getTime()) ? parsed : null;
+}
+
+function startOfUtcDay(date) {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+}
+
+function subtractUtcMonths(date, months) {
+  const targetMonth = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() - months, 1));
+  const finalDay = new Date(Date.UTC(targetMonth.getUTCFullYear(), targetMonth.getUTCMonth() + 1, 0)).getUTCDate();
+  targetMonth.setUTCDate(Math.min(date.getUTCDate(), finalDay));
+  return targetMonth;
+}
+
+export function createEvidenceWindow(preset, { generatedAt, asOf } = {}) {
+  const key = normalizeEvidenceWindowPreset(preset);
+  const referenceSource = asOf !== undefined && asOf !== null && asOf !== "" ? "asOf" : "generatedAt";
+  const referenceValue = referenceSource === "asOf" ? asOf : generatedAt;
+  const parsedReference = parseDate(referenceValue);
+  if (!parsedReference) {
+    throw new RangeError(`A valid ${referenceSource} date is required to calculate an evidence window`);
+  }
+
+  const referenceDate = startOfUtcDay(parsedReference);
+  const definition = EVIDENCE_WINDOW_PRESETS[key];
+  let cutoffDate = null;
+  if (definition.days) {
+    cutoffDate = new Date(referenceDate.getTime() - definition.days * 86400000);
+  } else if (definition.months) {
+    cutoffDate = subtractUtcMonths(referenceDate, definition.months);
+  }
+
+  return Object.freeze({
+    preset: key,
+    label: definition.label,
+    referenceSource,
+    asOf: referenceDate.toISOString(),
+    cutoff: cutoffDate?.toISOString() || null,
+    granularity: "utc-day",
+  });
+}
+
+function partitionDatedEvidence(entries, dateField, preset, options) {
+  if (!Array.isArray(entries)) throw new TypeError("Evidence entries must be an array");
+  const window = createEvidenceWindow(preset, options);
+  const asOfTime = new Date(window.asOf).getTime();
+  const cutoffTime = window.cutoff ? new Date(window.cutoff).getTime() : null;
+
+  const all = entries.map((entry) => {
+    const rawDate = entry?.[dateField];
+    const parsed = parseDate(rawDate);
+    let status;
+    let evidenceDate = null;
+
+    if (rawDate === null || rawDate === undefined || rawDate === "") {
+      status = "undated";
+    } else if (!parsed) {
+      status = "invalid-date";
+    } else {
+      const date = startOfUtcDay(parsed);
+      const time = date.getTime();
+      evidenceDate = date.toISOString();
+      if (time > asOfTime) status = "future";
+      else if (cutoffTime === null || time >= cutoffTime) status = "in-window";
+      else status = "out-of-window";
+    }
+
+    return {
+      ...entry,
+      evidenceWindow: Object.freeze({ field: dateField, date: evidenceDate, status }),
+    };
+  });
+
+  const withStatus = (status) => all.filter((entry) => entry.evidenceWindow.status === status);
+  const inWindow = withStatus("in-window");
+  const outOfWindow = withStatus("out-of-window");
+  const undated = withStatus("undated");
+  const invalid = withStatus("invalid-date");
+  const future = withStatus("future");
+
+  return {
+    window,
+    all,
+    inWindow,
+    outOfWindow,
+    undated,
+    invalid,
+    future,
+    excluded: [...outOfWindow, ...undated, ...invalid, ...future],
+  };
+}
+
+export function classifyCampaignsByWindow(campaigns, preset, options = {}) {
+  return partitionDatedEvidence(campaigns, "lastSeen", preset, options);
+}
+
+export function classifyKevsByWindow(vulnerabilities, preset, options = {}) {
+  return partitionDatedEvidence(vulnerabilities, "dateAdded", preset, options);
+}
+
+export function classifySignalsByWindow(signals, preset, options = {}) {
+  return partitionDatedEvidence(signals, "publishedAt", preset, options);
+}
+
+export function normalizeTopFocus(value, fallback = 10) {
+  const candidate = typeof value === "string"
+    ? Number(normaliseString(value).replace(/^top\s+/, ""))
+    : Number(value);
+  if (TOP_FOCUS_VALUES.includes(candidate)) return candidate;
+
+  const fallbackCandidate = typeof fallback === "string"
+    ? Number(normaliseString(fallback).replace(/^top\s+/, ""))
+    : Number(fallback);
+  return TOP_FOCUS_VALUES.includes(fallbackCandidate) ? fallbackCandidate : 10;
+}
+
+export function selectTopFocus(entries, value, fallback = 10) {
+  if (!Array.isArray(entries)) throw new TypeError("Focus entries must be an array");
+  const requestedCount = normalizeTopFocus(value, fallback);
+  if (!entries.length) {
+    return {
+      requestedCount,
+      actualCount: 0,
+      cutoffRank: null,
+      includedCutoffTies: false,
+      focused: [],
+      remaining: [],
+    };
+  }
+
+  const boundaryIndex = Math.min(requestedCount, entries.length) - 1;
+  const boundary = entries[boundaryIndex];
+  const rankedCutoff = Number(boundary?.competitionRank ?? boundary?.rank);
+  const cutoffRank = Number.isFinite(rankedCutoff) ? rankedCutoff : boundaryIndex + 1;
+  let endIndex = boundaryIndex + 1;
+
+  while (endIndex < entries.length) {
+    const nextRank = Number(entries[endIndex]?.competitionRank ?? entries[endIndex]?.rank);
+    if (!Number.isFinite(nextRank) || nextRank !== cutoffRank) break;
+    endIndex += 1;
+  }
+
+  const focused = entries.slice(0, endIndex);
+  return {
+    requestedCount,
+    actualCount: focused.length,
+    cutoffRank,
+    includedCutoffTies: focused.length > requestedCount,
+    focused,
+    remaining: entries.slice(endIndex),
+  };
+}
+
 function clamp(value, minimum, maximum) {
   return Math.min(maximum, Math.max(minimum, value));
 }
@@ -270,14 +479,14 @@ export function attackTechniqueUrl(id) {
     : `https://attack.mitre.org/techniques/${technique}/`;
 }
 
-export function navigatorLayer(profileName, techniques, attackVersion) {
+export function navigatorLayer(profileName, techniques, attackVersion, scope = {}) {
   const versions = { navigator: "5.2.0", layer: "4.5" };
   if (attackVersion) versions.attack = String(attackVersion);
   return {
     name: profileName,
     versions,
     domain: "enterprise-attack",
-    description: "ATT&CK techniques ranked by documentation-adjusted profile coverage. This is relevance, not likelihood or detection priority.",
+    description: `ATT&CK techniques ranked by documentation-adjusted profile coverage${scope.focus ? ` for ${scope.focus}` : ""}. This is relevance, not likelihood or detection efficacy. ATT&CK actor-technique relationships are undated${scope.evidenceWindow ? `; the ${scope.evidenceWindow} dated-evidence window applies only to supporting campaign, signal and KEV context` : ""}.`,
     techniques: techniques.map((technique) => ({
       techniqueID: technique.id,
       score: Math.max(1, Math.round(technique.techniqueScore || 0)),
@@ -291,7 +500,12 @@ export function navigatorLayer(profileName, techniques, attackVersion) {
       maxValue: 100,
     },
     legendItems: [],
-    metadata: [{ name: "Method", value: "Profile fit with documentation-breadth adjustment" }],
+    metadata: [
+      { name: "Method", value: "Profile fit with documentation-breadth adjustment" },
+      ...(scope.focus ? [{ name: "Analysis focus", value: scope.focus }] : []),
+      ...(scope.evidenceWindow ? [{ name: "Dated evidence window", value: scope.evidenceWindow }] : []),
+      { name: "Date boundary", value: "ATT&CK actor-technique relationships are undated historical context" },
+    ],
     links: [],
     showTacticRowBackground: false,
     tacticRowBackground: "#dddddd",

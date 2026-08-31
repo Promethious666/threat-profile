@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   assertValidCombinedData,
+  assertValidCurrentSignals,
   assertValidNormalisedSource,
 } from "./intelligence-lib.mjs";
 
@@ -13,19 +14,22 @@ async function readJson(path) {
   return JSON.parse(await readFile(path, "utf8"));
 }
 
-const [attack, targeting, kev, combined] = await Promise.all([
+const [attack, targeting, kev, currentSignals, combined] = await Promise.all([
   readJson(resolve(dataDir, "sources", "attack.json")),
   readJson(resolve(dataDir, "sources", "targeting.json")),
   readJson(resolve(dataDir, "sources", "kev.json")),
+  readJson(resolve(dataDir, "sources", "current-threat-signals.json")),
   readJson(resolve(dataDir, "intelligence.json")),
 ]);
 
 assertValidNormalisedSource("attack", attack);
 assertValidNormalisedSource("targeting", targeting);
 assertValidNormalisedSource("kev", kev);
+assertValidCurrentSignals(currentSignals);
 assertValidCombinedData(combined);
 
 console.log(
   `Validated ${combined.actors.length} actors, ${combined.techniques.length} techniques, ` +
-  `${combined.campaigns.length} campaigns and ${combined.vulnerabilities.length} KEV entries.`,
+  `${combined.campaigns.length} campaigns, ${combined.vulnerabilities.length} KEV entries and ` +
+  `${currentSignals.signals.length} curated current signals.`,
 );
