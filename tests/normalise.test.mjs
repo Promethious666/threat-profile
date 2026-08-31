@@ -40,8 +40,11 @@ test("normaliseAttack retains actor, relationship, technique, and campaign prove
   assert.deepEqual(result.campaigns[0].actorIds, ["G0001"]);
   assert.equal(result.techniques[0].platforms[0], "Windows");
   assert.match(result.actors[0].procedures[0].description, /Observed use/);
-  assert.ok(result.actors[0].procedures[0].references.includes("https://example.org/report"));
-  assert.ok(result.actors[0].references.includes("https://example.org/actor"));
+  assert.deepEqual(result.actors[0].procedures[0].references, ["https://example.org/report"]);
+  assert.deepEqual(result.actors[0].references, [
+    "https://attack.mitre.org/groups/G0001/",
+    "https://example.org/actor",
+  ]);
 });
 
 test("targeting normalisation preserves source evidence without inventing observation dates", () => {
@@ -70,7 +73,7 @@ test("targeting normalisation preserves source evidence without inventing observ
   assert.equal(target.observedAt, null);
   assert.equal(target.evidenceType, "aggregated historical targeting context");
   assert.deepEqual(target.recordIds, ["record-1"]);
-  assert.ok(target.references.includes("https://example.org/targeting"));
+  assert.deepEqual(target.references, ["https://example.org/reference", "https://example.org/targeting"]);
 });
 
 test("KEV normalisation preserves operational context and references", () => {

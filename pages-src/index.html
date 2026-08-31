@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; media-src 'none'; worker-src 'none'; manifest-src 'self'; upgrade-insecure-requests">
+    <meta name="referrer" content="no-referrer">
     <meta name="description" content="Evidence-led cyber threat profiles with ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
     <meta name="theme-color" content="#091018">
     <meta property="og:type" content="website">
@@ -87,7 +89,7 @@
         <form id="profile-form" class="profile-form">
           <label>
             <span>Organisation <small>optional, kept out of shared links</small></span>
-            <input id="organisation" name="organisation" type="text" autocomplete="organization" placeholder="Organisation context">
+            <input id="organisation" name="organisation" type="text" autocomplete="organization" maxlength="200" placeholder="Organisation context">
           </label>
 
           <label>
@@ -106,7 +108,7 @@
 
           <label>
             <span>Technology context <small>comma-separated keywords</small></span>
-            <input id="technology" name="technology" type="text" placeholder="Citrix, VMware, Microsoft" autocomplete="off">
+            <input id="technology" name="technology" type="text" maxlength="300" placeholder="Citrix, VMware, Microsoft" autocomplete="off">
           </label>
 
           <label>
@@ -435,7 +437,7 @@
             <article class="work-card">
               <span class="card-kicker">Analytic confidence</span>
               <h3>Separate from relevance</h3>
-              <p>Current targeting context is a single undated aggregate source, so profile inferences are labelled low analytic confidence even when profile fit is focused.</p>
+              <p>Actor rankings use historical public reporting. Validate priorities against current intelligence before operational use, even when profile fit is focused.</p>
             </article>
             <article class="work-card">
               <span class="card-kicker">Detection content</span>
@@ -462,12 +464,12 @@
           <div class="export-panel">
             <div>
               <h3>Take the assessment with you</h3>
-              <p>Save a concise decision report, export the complete data, or continue analysis in ATT&amp;CK Navigator. PDF reports are created locally and include any organisation and technology text entered—review them before sharing.</p>
+              <p id="export-privacy-note">Save a concise decision report, export the complete data, or continue analysis in ATT&amp;CK Navigator. PDF and complete JSON exports are created locally and may include organisation or technology text entered—review them before sharing. Navigator exports exclude both fields.</p>
             </div>
             <div class="export-actions">
-              <button class="secondary-button" type="button" data-print-report aria-describedby="print-privacy-note">Print / Save PDF</button>
-              <button class="secondary-button" id="export-profile" type="button">Export complete profile</button>
-              <button class="secondary-button" id="export-attack" type="button">Download ATT&amp;CK layer</button>
+              <button class="secondary-button" type="button" data-print-report aria-describedby="export-privacy-note">Print / Save PDF</button>
+              <button class="secondary-button" id="export-profile" type="button" aria-describedby="export-privacy-note">Export complete profile</button>
+              <button class="secondary-button" id="export-attack" type="button" aria-describedby="export-privacy-note">Download ATT&amp;CK layer</button>
             </div>
           </div>
         </section>

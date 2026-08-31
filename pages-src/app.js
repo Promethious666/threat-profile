@@ -118,6 +118,7 @@ const state = {
 const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
 let feedbackTimer;
 const screenDocumentTitle = document.title;
+const validViews = new Set([...document.querySelectorAll("[data-panel]")].map((panel) => panel.dataset.panel));
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -129,7 +130,22 @@ function escapeHtml(value) {
 }
 
 function safeUrl(value) {
-  return /^https:\/\//.test(String(value || "")) ? String(value) : "";
+  const raw = String(value || "").trim();
+  if (!raw || /[\u0000-\u001F\u007F"<>\\]/.test(raw)) return "";
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:" || !url.hostname || url.username || url.password) return "";
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
+function externalLink(value, label) {
+  const url = safeUrl(value);
+  return url
+    ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a>`
+    : "";
 }
 
 function displayRegion(code) {
@@ -178,11 +194,15 @@ function sourceLinks(references, label = "Open supporting source") {
   const links = (references || []).map(safeUrl).filter(Boolean).slice(0, 4);
   if (!links.length) return '<span class="muted">No assertion-level citation retained</span>';
   return links.map((url, index) =>
-    `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}${links.length > 1 ? ` ${index + 1}` : ""}</a>`).join("");
+    externalLink(url, `${label}${links.length > 1 ? ` ${index + 1}` : ""}`)).join("");
 }
 
 function profileName() {
   return state.profile?.organisation || `${state.profile?.sector || ""} · ${displayRegion(state.profile?.country || "")}`;
+}
+
+function publicProfileName() {
+  return `${state.profile?.sector || ""} · ${displayRegion(state.profile?.country || "")}`;
 }
 
 function evidenceWindowLabel() {
@@ -237,8 +257,7 @@ async function copyText(value, successMessage) {
     const textarea = document.createElement("textarea");
     textarea.value = value;
     textarea.setAttribute("readonly", "");
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
+    textarea.className = "clipboard-fallback";
     document.body.append(textarea);
     textarea.select();
     const copied = document.execCommand("copy");
@@ -309,7 +328,7 @@ function readProfileFromUrl() {
   elements.evidenceWindow.value = normalizeEvidenceWindowPreset(params.get("window") || params.get("lookback"));
   elements.focusCount.value = String(normalizeTopFocus(params.get("focus")));
   state.exampleProfile = !hasValidRequest;
-  state.activeView = document.querySelector(`[data-panel="${params.get("view")}"]`) ? params.get("view") : "overview";
+  state.activeView = validViews.has(params.get("view")) ? params.get("view") : "overview";
   state.selectedActorId = params.get("actor");
   state.selectedTechniqueId = params.get("technique");
 }
@@ -341,7 +360,7 @@ function renderHealth() {
         <dt>Version</dt><dd>${escapeHtml(source.sourceVersion || "Not supplied")}</dd>
       </dl>
       ${source.error ? `<p>Refresh issue: ${escapeHtml(source.error)}</p>` : ""}
-      <div class="link-row"><a href="${escapeHtml(safeUrl(source.sourceUrl))}" target="_blank" rel="noopener noreferrer">Open ${escapeHtml(source.name)} source</a></div>
+      <div class="link-row">${externalLink(source.sourceUrl, `Open ${source.name} source`)}</div>
     </article>
   `).join("") : '<div class="empty-state">Source health metadata is unavailable.</div>';
 
@@ -420,7 +439,7 @@ function renderCurrentSignals() {
         </ul>
       </details>
       <footer><span>Source published: ${escapeHtml(formatDate(signal.publishedAt))}</span><span>Publication date is evidence recency, not an activity date.</span></footer>
-      <div class="link-row"><a href="${escapeHtml(safeUrl(signal.source?.url))}" target="_blank" rel="noopener noreferrer">Open ${escapeHtml(signal.source?.name || "source")}</a><a href="${escapeHtml(safeUrl(signal.entityReference))}" target="_blank" rel="noopener noreferrer">Open ATT&amp;CK entity</a></div>
+      <div class="link-row">${externalLink(signal.source?.url, `Open ${signal.source?.name || "source"}`)}${externalLink(signal.entityReference, "Open ATT&CK entity")}</div>
     </article>
   `).join("") : `<div class="empty-state">No matched dated signal is inside ${escapeHtml(label)}. ${excluded ? `${excluded} matched record${excluded === 1 ? " is" : "s are"} retained as excluded evidence in the complete JSON export.` : "The curated signal layer has no matching record for this profile."}</div>`;
 }
@@ -437,7 +456,7 @@ function renderJudgements() {
   const judgements = [
     {
       kind: "Actor landscape",
-      badge: "Low analytic confidence",
+      badge: "Historical public-source fit",
       badgeClass: "warning",
       title: leaders.length > 1
         ? `${leaders.length} co-leading profile matches`
@@ -548,7 +567,7 @@ function renderOverview() {
     <p class="muted">${state.vulnerabilities.length} KEV catalogue additions inside ${escapeHtml(windowLabel)}; ${state.kevEvidence.excluded.length} outside dated scope. A keyword match never confirms a vulnerable asset.</p>
   `;
   elements.overviewGaps.innerHTML = [
-    "Targeting context is aggregated and undated; profile inferences remain low analytic confidence.",
+    "Actor rankings are based on historical public reporting and should be validated against current intelligence before operational use.",
     "Current-signal publication dates show when evidence was published, not necessarily when activity occurred.",
     "Infrastructure, domains, IP addresses, hashes and host/network artefacts are not collected.",
     hasTechnology ? "Technology matching is text-based and does not include product versions or asset exposure." : "No technology or asset context is available for KEV relevance.",
@@ -571,7 +590,7 @@ function actorRow(actor) {
   return `
     <button class="actor-row" type="button" data-actor-id="${escapeHtml(actor.id)}" aria-pressed="${selected}">
       <span>
-        <span class="row-title"><strong>${escapeHtml(actor.name)}</strong>${fitBadge(actor)}${inFocus ? '<span class="badge reviewed">In analysis focus</span>' : '<span class="badge historical">Outside analysis focus</span>'}<span class="badge">Low analytic confidence</span></span>
+        <span class="row-title"><strong>${escapeHtml(actor.name)}</strong>${fitBadge(actor)}${inFocus ? '<span class="badge reviewed">In analysis focus</span>' : '<span class="badge historical">Outside analysis focus</span>'}</span>
         <span class="row-meta"><span>${escapeHtml(actor.id)}</span><span>Rank #${actor.competitionRank}</span><span>${escapeHtml(actor.matchDimensions.join(" + "))}</span><span>${actor.campaigns?.length || 0} campaigns</span><span>${actor.techniques?.length || 0} techniques</span></span>
       </span>
       <span class="row-score"><strong>${actor.profileFit}</strong><span>profile fit / 100</span></span>
@@ -603,7 +622,7 @@ function renderActorDetail() {
   const actorTechniques = state.techniques.filter((technique) => technique.actorIds.includes(actor.id)).slice(0, 12);
   elements.actorDetail.innerHTML = `
     <div class="detail-header">
-      <div><span class="card-kicker">Actor evidence</span><h3>${escapeHtml(actor.name)}</h3><div class="tag-row">${fitBadge(actor)}<span class="badge ${inFocus ? "reviewed" : "historical"}">${inFocus ? `Contributes to ${escapeHtml(focusLabel())}` : `Outside ${escapeHtml(focusLabel())}`}</span><span class="badge warning">Low analytic confidence</span><span class="badge">${escapeHtml(actor.id)}</span></div></div>
+      <div><span class="card-kicker">Actor evidence</span><h3>${escapeHtml(actor.name)}</h3><div class="tag-row">${fitBadge(actor)}<span class="badge ${inFocus ? "reviewed" : "historical"}">${inFocus ? `Contributes to ${escapeHtml(focusLabel())}` : `Outside ${escapeHtml(focusLabel())}`}</span><span class="badge">Historical public-source evidence</span><span class="badge">${escapeHtml(actor.id)}</span></div></div>
       <span class="row-score"><strong>${actor.profileFit}</strong><span>profile fit</span></span>
     </div>
     <p class="muted">${escapeHtml(actor.description || "ATT&CK actor record.")}</p>
@@ -722,7 +741,7 @@ function detectionCard(detection) {
       </details>
       <details><summary>Bounded validation procedure</summary><ol>${detection.validationSteps.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ol></details>
       <div class="kql-block"><button class="copy-button" type="button" data-copy-detection="${escapeHtml(detection.id)}">Copy KQL</button><pre><code>${escapeHtml(detection.kql)}</code></pre></div>
-      <div class="detail-section"><h4>Official Microsoft schema</h4><p>Schema reviewed ${escapeHtml(formatDate(detection.schemaVerifiedAt))}. Successful schema review does not replace tenant testing.</p><div class="link-row">${detection.documentationLinks.map((link) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label)}</a>`).join("")}</div></div>
+      <div class="detail-section"><h4>Official Microsoft schema</h4><p>Schema reviewed ${escapeHtml(formatDate(detection.schemaVerifiedAt))}. Successful schema review does not replace tenant testing.</p><div class="link-row">${detection.documentationLinks.map((link) => externalLink(link.url, link.label)).join("")}</div></div>
     </article>`;
 }
 
@@ -870,7 +889,7 @@ function renderPrintReport() {
     <section class="report-section">
       <h2>Executive summary</h2>
       <div class="report-summary-grid">
-        <article><strong>Actor landscape</strong><p>${escapeHtml(leaderSummary)} Profile fit is relevance, not likelihood, and the aggregate targeting evidence remains low analytic confidence.</p></article>
+        <article><strong>Actor landscape</strong><p>${escapeHtml(leaderSummary)} Profile fit is relevance, not likelihood; validate it against current intelligence before operational use.</p></article>
         <article><strong>Defensive behaviour</strong><p>${reportTechniques.length ? `${reportTechniques.length} leading operational techniques are included below; ${hunts.length} have mapped Microsoft-schema-reviewed hunting starters in this report.` : "No operational ATT&CK techniques are available for this context."}</p></article>
         <article><strong>Dated threat context</strong><p>${state.currentSignals.length} curated signal publications and ${state.campaigns.length} linked ATT&amp;CK campaigns fall inside ${escapeHtml(evidenceWindowLabel())}. Dates provide evidence recency, not proof of current activity.</p></article>
         <article><strong>Exposure context</strong><p>${escapeHtml(exposureSummary)}</p></article>
@@ -931,9 +950,9 @@ function renderPrintReport() {
 
     <section class="report-section">
       <h2>Sources and evidence boundaries</h2>
-      <div class="report-sources">${(state.intelligence.health || []).map((source) => `<article><strong>${escapeHtml(source.name)}</strong><p>Status: ${escapeHtml(source.status)} · Records: ${escapeHtml(source.recordCount ?? "Unknown")} · Version: ${escapeHtml(source.sourceVersion || "Not supplied")} · Last success: ${escapeHtml(formatDate(source.lastSuccessfulRefresh, true))}</p>${safeUrl(source.sourceUrl) ? `<a href="${escapeHtml(source.sourceUrl)}">${escapeHtml(source.sourceUrl)}</a>` : ""}</article>`).join("")}</div>
+      <div class="report-sources">${(state.intelligence.health || []).map((source) => `<article><strong>${escapeHtml(source.name)}</strong><p>Status: ${escapeHtml(source.status)} · Records: ${escapeHtml(source.recordCount ?? "Unknown")} · Version: ${escapeHtml(source.sourceVersion || "Not supplied")} · Last success: ${escapeHtml(formatDate(source.lastSuccessfulRefresh, true))}</p>${externalLink(source.sourceUrl, safeUrl(source.sourceUrl))}</article>`).join("")}</div>
       <div class="report-sources"><article><strong>Curated current threat signals</strong><p>${state.currentSignalData.signals.length} provenance-reviewed records · reviewed ${escapeHtml(formatDate(state.currentSignalData.reviewedAt))}. Individual source links are retained in the JSON export and interactive evidence cards.</p></article></div>
-      <ul><li>Profile fit is not attack probability, attribution confidence or evidence of current activity.</li><li>Targeting context is aggregated and undated; analytic confidence remains low.</li><li>The time picker filters only dated publications, ATT&amp;CK <code>last_seen</code> and CISA <code>dateAdded</code>; it does not date undated actor relationships.</li><li>Infrastructure, domains, IP addresses, hashes and host/network artefacts are not collected.</li><li>KQL is schema reviewed against Microsoft Learn but requires tenant validation.</li></ul>
+      <ul><li>Profile fit is not attack probability, attribution confidence or evidence of current activity.</li><li>Actor rankings use historical public reporting and require validation against current intelligence before operational use.</li><li>The time picker filters only dated publications, ATT&amp;CK <code>last_seen</code> and CISA <code>dateAdded</code>; it does not date undated actor relationships.</li><li>Infrastructure, domains, IP addresses, hashes and host/network artefacts are not collected.</li><li>KQL is schema reviewed against Microsoft Learn but requires tenant validation.</li></ul>
     </section>
 
     <footer class="report-footer"><p>Report generated from validated public source snapshots. Complete ranked data and methodology metadata remain available in the JSON export.</p></footer>
@@ -1040,17 +1059,19 @@ function buildProfile({ announceResult = false, pushHistory = false } = {}) {
 }
 
 function setView(view, { updateHistory = true, scroll = true } = {}) {
-  if (!document.querySelector(`[data-panel="${view}"]`)) view = "overview";
+  if (!validViews.has(view)) view = "overview";
   state.activeView = view;
+  let activePanel = null;
   document.querySelectorAll("[data-panel]").forEach((panel) => {
     panel.hidden = panel.dataset.panel !== view;
+    if (!panel.hidden) activePanel = panel;
   });
   document.querySelectorAll("[data-view]").forEach((link) => {
     if (link.dataset.view === view) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
   });
   if (updateHistory) updateUrl("push");
-  if (scroll) document.querySelector(`[data-panel="${view}"]`)?.scrollIntoView({ block: "start" });
+  if (scroll) activePanel?.scrollIntoView({ block: "start" });
 }
 
 function selectActor(actorId, { moveToActors = false } = {}) {
@@ -1222,14 +1243,14 @@ elements.shareProfile.addEventListener("click", () => {
 
 elements.exportProfile.addEventListener("click", () => {
   if (!state.profile) return;
-  const slug = (state.profile.organisation || `${state.profile.sector}-${state.profile.country}`)
+  const slug = `${state.profile.sector}-${state.profile.country}`
     .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   downloadJson(`${slug || "threat-profile"}.json`, {
     schemaVersion: 3,
     generatedAt: state.intelligence.generatedAt,
     methodology: {
       profileFit: "specificity-weighted sector and country context",
-      confidence: "separate from profile fit; aggregate undated targeting context is low confidence",
+      confidence: "separate from profile fit; historical aggregate targeting context requires validation against current intelligence",
       analysisFocus: "approved Top-N actor cohort with every score tie at the cutoff retained; downstream techniques, software, campaigns and KQL priorities are recalculated from this cohort",
       datedEvidenceWindow: "campaigns use ATT&CK last_seen, KEV uses CISA dateAdded, and current signals use source publishedAt; undated actor targeting and ATT&CK relationships are not filtered",
       techniqueScore: "minimum of weighted and documentation-adjusted actor coverage",
@@ -1239,6 +1260,11 @@ elements.exportProfile.addEventListener("click", () => {
     },
     sourceHealth: state.intelligence.health,
     coverage: state.intelligence.coverage,
+    privacy: {
+      containsOrganisationContext: Boolean(state.profile.organisation),
+      containsTechnologyContext: Boolean(state.profile.technology),
+      sharingNotice: "This complete export may contain user-entered context. Review it before sharing.",
+    },
     profile: {
       organisation: state.profile.organisation || null,
       sector: state.profile.sector,
@@ -1283,14 +1309,16 @@ elements.exportProfile.addEventListener("click", () => {
       },
     },
   });
-  showFeedback("Complete profile exported.");
+  showFeedback(state.profile.organisation || state.profile.technology
+    ? "Complete profile exported. It includes entered context—review it before sharing."
+    : "Complete profile exported.");
 });
 
 elements.exportAttack.addEventListener("click", () => {
   if (!state.profile) return;
   downloadJson(
     "attack-navigator-layer.json",
-    navigatorLayer(profileName(), state.techniques, state.intelligence.versions?.attack, {
+    navigatorLayer(publicProfileName(), state.techniques, state.intelligence.versions?.attack, {
       focus: focusLabel(),
       evidenceWindow: evidenceWindowLabel(),
     }),

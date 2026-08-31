@@ -1,0 +1,5 @@
+Contact: https://github.com/Promethious666/threat-profile/security/advisories/new
+Expires: 2027-08-31T23:59:59Z
+Preferred-Languages: en
+Canonical: https://promethious666.github.io/threat-profile/.well-known/security.txt
+Policy: https://github.com/Promethious666/threat-profile/security/policy
