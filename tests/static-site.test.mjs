@@ -69,6 +69,7 @@ test("publication automation follows least privilege and stays maintainable", ()
   assert.match(buildJob, /if: github\.ref == 'refs\/heads\/main'/);
   assert.doesNotMatch(buildJob, /pages: write|id-token: write/);
   assert.match(pagesWorkflow, /persist-credentials: false/);
+  assert.match(pagesWorkflow, /include-hidden-files: true/);
   assert.match(ciWorkflow, /persist-credentials: false/);
   assert.match(dependabot, /package-ecosystem: github-actions/);
   assert.match(dependabot, /interval: weekly/);
