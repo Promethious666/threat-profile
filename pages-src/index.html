@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Evidence-led cyber threat profiles with ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
+    <meta name="theme-color" content="#091018">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Threat Profile Workbench">
+    <meta property="og:description" content="Evidence-led actor relevance, ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
+    <meta property="og:url" content="https://promethious666.github.io/threat-profile/">
+    <meta property="og:image" content="https://promethious666.github.io/threat-profile/assets/threat-profile-social.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Abstract evidence relationship map centred on a glowing diamond model motif">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Threat Profile Workbench">
+    <meta name="twitter:description" content="Evidence-led actor relevance, ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
+    <meta name="twitter:image" content="https://promethious666.github.io/threat-profile/assets/threat-profile-social.png">
+    <title>Threat Profile Workbench</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to workbench</a>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="./" aria-label="Threat Profile Workbench home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" role="img">
+              <path d="M16 3 29 16 16 29 3 16Z"></path>
+              <circle cx="16" cy="16" r="3"></circle>
+            </svg>
+          </span>
+          <span>
+            <strong>Threat Profile</strong>
+            <small>Decision workbench</small>
+          </span>
+        </a>
+
+        <div class="header-actions">
+          <button class="status-button" id="health-button" type="button" aria-expanded="false" aria-controls="health-popover">
+            <span class="status-dot" id="health-dot" aria-hidden="true"></span>
+            <span id="health-label">Loading intelligence</span>
+          </button>
+          <button class="icon-button" id="share-profile" type="button" disabled>
+            <span aria-hidden="true">↗</span>
+            <span>Share</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="health-popover" id="health-popover" hidden>
+        <div class="shell health-popover-inner">
+          <div>
+            <strong>Source status</strong>
+            <span id="health-summary">Checking source snapshots…</span>
+          </div>
+          <a href="#sources" data-view-link="sources">Inspect sources</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content" class="shell" aria-busy="true">
+      <section class="workspace-heading" aria-labelledby="workspace-title">
+        <div>
+          <p class="eyebrow">Evidence-led cyber threat intelligence</p>
+          <h1 id="workspace-title">Turn threat context into defensive decisions.</h1>
+        </div>
+        <p>
+          Profile-fit ranking, ATT&amp;CK relationships, KEV exposure context and Microsoft security hunts—without presenting inference as direct targeting.
+        </p>
+      </section>
+
+      <section class="profile-builder" id="profile-builder" aria-labelledby="profile-heading">
+        <div class="builder-copy">
+          <span class="context-label" id="profile-mode">Example context</span>
+          <h2 id="profile-heading">Define the operating context</h2>
+          <p>Sector and country drive the evidence-backed profile. Organisation and technology remain optional context.</p>
+          <ol class="quick-guide" aria-label="How to use the workbench">
+            <li><span>1</span><div><strong>Set context</strong><small>Choose sector and country; optional text stays out of share links.</small></div></li>
+            <li><span>2</span><div><strong>Review priorities</strong><small>Start with key judgements, actions and evidence gaps.</small></div></li>
+            <li><span>3</span><div><strong>Validate &amp; export</strong><small>Test hunts, confirm exposure and save the report.</small></div></li>
+          </ol>
+        </div>
+
+        <form id="profile-form" class="profile-form">
+          <label>
+            <span>Organisation <small>optional, kept out of shared links</small></span>
+            <input id="organisation" name="organisation" type="text" autocomplete="organization" placeholder="Organisation context">
+          </label>
+
+          <label>
+            <span>Sector</span>
+            <select id="sector" name="sector" required disabled>
+              <option value="">Loading sectors…</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Country</span>
+            <select id="country" name="country" required disabled>
+              <option value="">Loading countries…</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Technology context <small>comma-separated keywords</small></span>
+            <input id="technology" name="technology" type="text" placeholder="Citrix, VMware, Microsoft" autocomplete="off">
+          </label>
+
+          <button class="primary-button" id="analyse-button" type="submit" disabled>
+            Build threat profile
+            <span aria-hidden="true">→</span>
+          </button>
+        </form>
+      </section>
+
+      <div id="status-region" class="sr-only" aria-live="polite"></div>
+      <section id="error-panel" class="notice notice-error" hidden role="alert">
+        <div>
+          <strong>Threat intelligence is temporarily unavailable.</strong>
+          <p id="error-message">The dataset could not be loaded.</p>
+        </div>
+        <button class="secondary-button" id="retry-button" type="button">Retry</button>
+      </section>
+
+      <div id="results" hidden>
+        <section class="brief-header" aria-labelledby="profile-title">
+          <div>
+            <div class="brief-labels">
+              <span class="context-label" id="scope-badge">Profile relevance inference</span>
+              <span class="muted" id="profile-date"></span>
+            </div>
+            <h2 id="profile-title" tabindex="-1"></h2>
+            <p id="profile-basis"></p>
+          </div>
+          <div class="brief-actions">
+            <button class="secondary-button" type="button" data-print-report aria-describedby="print-privacy-note">Print / Save PDF</button>
+            <button class="secondary-button" id="edit-profile" type="button">Edit context</button>
+            <span class="sr-only" id="print-privacy-note">The report is created locally and includes any organisation and technology text entered. Review it before sharing.</span>
+          </div>
+        </section>
+
+        <section class="decision-grid" aria-labelledby="judgements-heading">
+          <div class="section-title compact-title">
+            <div>
+              <p class="eyebrow">Key judgements</p>
+              <h2 id="judgements-heading">What matters now</h2>
+            </div>
+            <p>Deterministic assessments with visible evidence boundaries.</p>
+          </div>
+          <div class="judgement-grid" id="judgement-grid"></div>
+        </section>
+
+        <section class="priority-panel" aria-labelledby="priority-heading">
+          <div>
+            <p class="eyebrow">Priority actions</p>
+            <h2 id="priority-heading">What the SOC should do next</h2>
+          </div>
+          <ol id="priority-actions" class="priority-list"></ol>
+        </section>
+
+        <nav class="view-nav" aria-label="Threat profile views">
+          <a href="#overview" data-view="overview" aria-current="page">Overview</a>
+          <a href="#actors" data-view="actors">Actors &amp; campaigns</a>
+          <a href="#techniques" data-view="techniques">Techniques &amp; KQL</a>
+          <a href="#vulnerabilities" data-view="vulnerabilities">Exposure / KEV</a>
+          <a href="#models" data-view="models">Diamond &amp; Pyramid</a>
+          <a href="#sources" data-view="sources">Sources &amp; method</a>
+        </nav>
+
+        <section class="view-panel" id="overview" data-panel="overview" aria-labelledby="overview-heading">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Profile overview</p>
+              <h2 id="overview-heading">Decision brief</h2>
+            </div>
+            <p id="overview-scope"></p>
+          </div>
+          <div class="overview-grid">
+            <article class="work-card span-two">
+              <div class="card-heading">
+                <div>
+                  <span class="card-kicker">Candidates</span>
+                  <h3>Leading actor matches</h3>
+                </div>
+                <a href="#actors" data-view-link="actors">Investigate all</a>
+              </div>
+              <div id="overview-actors" class="compact-list"></div>
+            </article>
+            <article class="work-card">
+              <div class="card-heading">
+                <div>
+                  <span class="card-kicker">Behaviour</span>
+                  <h3>Priority techniques</h3>
+                </div>
+                <a href="#techniques" data-view-link="techniques">Open KQL</a>
+              </div>
+              <div id="overview-techniques" class="compact-list"></div>
+            </article>
+            <article class="work-card">
+              <div class="card-heading">
+                <div>
+                  <span class="card-kicker">Activity</span>
+                  <h3>Campaign context</h3>
+                </div>
+              </div>
+              <div id="overview-campaigns"></div>
+            </article>
+            <article class="work-card">
+              <div class="card-heading">
+                <div>
+                  <span class="card-kicker">Exposure</span>
+                  <h3>KEV position</h3>
+                </div>
+                <a href="#vulnerabilities" data-view-link="vulnerabilities">Review KEV</a>
+              </div>
+              <div id="overview-exposure"></div>
+            </article>
+            <article class="work-card">
+              <div class="card-heading">
+                <div>
+                  <span class="card-kicker">Evidence gaps</span>
+                  <h3>What limits this assessment</h3>
+                </div>
+              </div>
+              <ul id="overview-gaps" class="plain-list"></ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="view-panel" id="actors" data-panel="actors" hidden aria-labelledby="actors-heading">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Threat landscape</p>
+              <h2 id="actors-heading">Actors &amp; linked campaigns</h2>
+            </div>
+            <p>Profile fit measures how discriminating the recorded sector and country context is. It is not likelihood or attribution confidence.</p>
+          </div>
+
+          <div class="filter-bar">
+            <label>
+              <span>Search actors</span>
+              <input id="actor-search" type="search" placeholder="Name, alias or ATT&CK ID">
+            </label>
+            <label>
+              <span>Match band</span>
+              <select id="actor-band-filter">
+                <option value="all">All match bands</option>
+                <option value="Focused match">Focused match</option>
+                <option value="Material match">Material match</option>
+                <option value="Broad match">Broad match</option>
+              </select>
+            </label>
+            <button class="quiet-button" id="clear-actor-filters" type="button">Clear filters</button>
+          </div>
+          <p class="result-count" id="actor-count"></p>
+          <div class="split-workspace">
+            <div>
+              <div id="actor-list" class="actor-list"></div>
+              <button class="secondary-button load-more" id="actor-more" type="button" hidden>Show more actors</button>
+            </div>
+            <aside class="detail-panel" id="actor-detail" aria-live="polite">
+              <div class="empty-state">Select an actor to inspect its evidence, campaigns, techniques and analytical gaps.</div>
+            </aside>
+          </div>
+
+          <div class="subsection">
+            <div class="section-title compact-title">
+              <div>
+                <p class="eyebrow">ATT&amp;CK records</p>
+                <h3>Linked campaign context</h3>
+              </div>
+              <p id="campaign-count"></p>
+            </div>
+            <div id="campaign-list" class="campaign-grid"></div>
+          </div>
+        </section>
+
+        <section class="view-panel" id="techniques" data-panel="techniques" hidden aria-labelledby="techniques-heading">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Defensive behaviour</p>
+              <h2 id="techniques-heading">ATT&amp;CK techniques &amp; Microsoft KQL</h2>
+            </div>
+            <p>Technique scores measure documentation-adjusted profile coverage. Reviewed queries remain hunting starters until tested and tuned in the destination tenant.</p>
+          </div>
+
+          <div class="filter-bar technique-filters">
+            <label>
+              <span>Search techniques</span>
+              <input id="technique-search" type="search" placeholder="Technique name or ID">
+            </label>
+            <label>
+              <span>Tactic</span>
+              <select id="tactic-filter"><option value="all">All tactics</option></select>
+            </label>
+            <label class="checkbox-label">
+              <input id="detection-filter" type="checkbox">
+              <span>Reviewed KQL available</span>
+            </label>
+            <button class="quiet-button" id="clear-technique-filters" type="button">Clear filters</button>
+          </div>
+          <p class="result-count" id="technique-count"></p>
+          <div class="split-workspace technique-workspace">
+            <div>
+              <div id="technique-list" class="technique-list"></div>
+              <button class="secondary-button load-more" id="technique-more" type="button" hidden>Show more techniques</button>
+            </div>
+            <aside class="detail-panel" id="technique-detail" aria-live="polite">
+              <div class="empty-state">Select a technique to inspect contributing actors, telemetry requirements and reviewed hunt content.</div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view-panel" id="vulnerabilities" data-panel="vulnerabilities" hidden aria-labelledby="vulnerabilities-heading">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Exploitation pressure</p>
+              <h2 id="vulnerabilities-heading">CISA Known Exploited Vulnerabilities</h2>
+            </div>
+            <p id="kev-context"></p>
+          </div>
+          <div class="exposure-banner" id="exposure-banner"></div>
+          <p class="result-count" id="kev-count"></p>
+          <div id="kev-list" class="kev-grid"></div>
+          <button class="secondary-button load-more" id="kev-more" type="button" hidden>Show more KEV entries</button>
+        </section>
+
+        <section class="view-panel" id="models" data-panel="models" hidden aria-labelledby="models-heading">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Analytical models</p>
+              <h2 id="models-heading">Relationship &amp; collection views</h2>
+            </div>
+            <p>Missing evidence remains visible rather than being inferred.</p>
+          </div>
+
+          <label class="model-selector">
+            <span>Focus actor</span>
+            <select id="model-actor-select"></select>
+          </label>
+
+          <article class="model-card">
+            <div class="card-heading">
+              <div>
+                <span class="card-kicker">Partial analytical frame</span>
+                <h3>Diamond readiness view</h3>
+              </div>
+              <span class="badge warning">Not a complete Diamond event</span>
+            </div>
+            <div id="diamond-view"></div>
+          </article>
+
+          <article class="model-card">
+            <div class="card-heading">
+              <div>
+                <span class="card-kicker">Detection durability</span>
+                <h3>Pyramid of Pain collection coverage</h3>
+              </div>
+            </div>
+            <div id="pyramid-view"></div>
+          </article>
+        </section>
+
+        <section class="view-panel" id="sources" data-panel="sources" hidden aria-labelledby="sources-heading">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Trust &amp; provenance</p>
+              <h2 id="sources-heading">Sources, coverage &amp; method</h2>
+            </div>
+            <p id="generated-at"></p>
+          </div>
+          <div class="health-grid" id="health-grid"></div>
+          <div class="coverage-grid" id="coverage-grid"></div>
+
+          <div class="method-grid">
+            <article class="work-card">
+              <span class="card-kicker">Profile fit</span>
+              <h3>Specificity, not probability</h3>
+              <p>An actor linked to a narrow set of sectors or countries scores more strongly than an actor linked broadly across the source. Sector and country remain independent historical attributes.</p>
+            </article>
+            <article class="work-card">
+              <span class="card-kicker">Analytic confidence</span>
+              <h3>Separate from relevance</h3>
+              <p>Current targeting context is a single undated aggregate source, so profile inferences are labelled low analytic confidence even when profile fit is focused.</p>
+            </article>
+            <article class="work-card">
+              <span class="card-kicker">Detection content</span>
+              <h3>Schema reviewed, tenant tested later</h3>
+              <p>KQL tables and projected fields are reviewed against Microsoft Learn. Every hunt still requires data-availability checks, false-positive review and tenant tuning.</p>
+            </article>
+          </div>
+
+          <div class="export-panel">
+            <div>
+              <h3>Take the assessment with you</h3>
+              <p>Save a concise decision report, export the complete data, or continue analysis in ATT&amp;CK Navigator. PDF reports are created locally and include any organisation and technology text entered—review them before sharing.</p>
+            </div>
+            <div class="export-actions">
+              <button class="secondary-button" type="button" data-print-report aria-describedby="print-privacy-note">Print / Save PDF</button>
+              <button class="secondary-button" id="export-profile" type="button">Export complete profile</button>
+              <button class="secondary-button" id="export-attack" type="button">Download ATT&amp;CK layer</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="notice evidence-boundary">
+          <strong>Evidence boundary.</strong>
+          This workbench assesses profile relevance from public structured intelligence. It does not claim direct targeting, confirmed exposure or production-ready detections without the supporting evidence.
+        </section>
+
+        <section class="print-report" id="print-report-output" aria-label="Printable threat profile report">
+          <div id="report-content"></div>
+        </section>
+      </div>
+    </main>
+
+    <div class="feedback" id="action-feedback" hidden role="status" aria-live="polite"></div>
+
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <p>Public structured intelligence with visible source, date and evidence boundaries.</p>
+        <a href="#sources" data-view-link="sources">Methodology and sources</a>
+      </div>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
