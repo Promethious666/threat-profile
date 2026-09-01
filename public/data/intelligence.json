@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-30T21:59:51.646Z",
+  "generatedAt": "2026-09-01T08:06:34.664Z",
   "health": [
     {
       "name": "MITRE ATT&CK",
       "status": "current",
-      "checkedAt": "2026-08-30T21:59:51.646Z",
-      "retrievedAt": "2026-08-30T21:59:51.646Z",
-      "lastSuccessfulRefresh": "2026-08-30T21:59:51.646Z",
+      "checkedAt": "2026-09-01T08:06:34.664Z",
+      "retrievedAt": "2026-09-01T08:06:34.664Z",
+      "lastSuccessfulRefresh": "2026-09-01T08:06:34.664Z",
       "sourceUrl": "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json",
       "sourceVersion": "19.2",
       "etag": "W/\"49e6c58705450b6d896c7091fe855fe2abae3dc529cb10b4b3022a9cdb9df354\"",
@@ -19,9 +19,9 @@
     {
       "name": "MISP Galaxy Tidal Groups",
       "status": "current",
-      "checkedAt": "2026-08-30T21:59:51.646Z",
-      "retrievedAt": "2026-08-30T21:59:51.646Z",
-      "lastSuccessfulRefresh": "2026-08-30T21:59:51.646Z",
+      "checkedAt": "2026-09-01T08:06:34.664Z",
+      "retrievedAt": "2026-09-01T08:06:34.664Z",
+      "lastSuccessfulRefresh": "2026-09-01T08:06:34.664Z",
       "sourceUrl": "https://raw.githubusercontent.com/MISP/misp-galaxy/main/clusters/tidal-groups.json",
       "sourceVersion": "W/\"9217639d861a8e618e25f523ba36b279bbbce3d722dd5da2b48d64f198435797\"",
       "etag": "W/\"9217639d861a8e618e25f523ba36b279bbbce3d722dd5da2b48d64f198435797\"",
@@ -33,21 +33,21 @@
     {
       "name": "CISA Known Exploited Vulnerabilities",
       "status": "current",
-      "checkedAt": "2026-08-30T21:59:51.646Z",
-      "retrievedAt": "2026-08-30T21:59:51.646Z",
-      "lastSuccessfulRefresh": "2026-08-30T21:59:51.646Z",
+      "checkedAt": "2026-09-01T08:06:34.664Z",
+      "retrievedAt": "2026-09-01T08:06:34.664Z",
+      "lastSuccessfulRefresh": "2026-09-01T08:06:34.664Z",
       "sourceUrl": "https://raw.githubusercontent.com/cisagov/kev-data/develop/known_exploited_vulnerabilities.json",
-      "sourceVersion": "2026.08.27",
-      "etag": "W/\"320ea6ed9487e89b7729534fd566673d6c43f76d53d1a88811893116a9a5fcd3\"",
+      "sourceVersion": "2026.08.31",
+      "etag": "W/\"d3b5f275407fdac7592878fe8752d10f40eac98ecc2f88f407505252e26c62ac\"",
       "lastModified": null,
-      "contentLength": 1618253,
-      "sha256": "25527b196142e9bfe5f3597ea31c302129b86e4240608ef76730b2533b61aae3",
-      "recordCount": 1685
+      "contentLength": 1621705,
+      "sha256": "2043ec4073019154e781f687359bfd9759e4d1ca9a18befc99fbe0c4c93bbde8",
+      "recordCount": 1687
     }
   ],
   "versions": {
     "attack": "19.2",
-    "kev": "2026.08.27"
+    "kev": "2026.08.31"
   },
   "coverage": {
     "actorsTotal": 176,
@@ -91393,6 +91393,48 @@
     }
   ],
   "vulnerabilities": [
+    {
+      "cve": "CVE-2026-82078",
+      "vendor": "PaperCut",
+      "product": "NG/MF",
+      "name": "PaperCut NG/MF Unsafe Reflection Vulnerability",
+      "description": "PaperCut NG/MF contains an unsafe reflection vulnerability that allows an attacker to manipulate system configuration parameters and execute arbitrary Java bytecode residing on the application classpath under the security context of the PaperCut server process. This vulnerability can be chained with CVE-2026-81578.",
+      "dateAdded": "2026-08-31",
+      "dueDate": "2026-09-14",
+      "ransomware": "Unknown",
+      "action": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+      "notes": "https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/?lid=2oneu2wt0ct4 ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-82078",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-82078",
+        "https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk",
+        "https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk",
+        "https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/?lid=2oneu2wt0ct4"
+      ],
+      "cwes": [
+        "CWE-470"
+      ]
+    },
+    {
+      "cve": "CVE-2026-81578",
+      "vendor": "PaperCut",
+      "product": "NG/MF",
+      "name": "PaperCut NG/MF Missing Authentication for Critical Function Vulnerability",
+      "description": "PaperCut NG/MF contains a missing authentication for critical function vulnerability which allows an unauthenticated remote attacker to modify certain system configurations. This vulnerability can be chained with CVE-2026-82078.",
+      "dateAdded": "2026-08-31",
+      "dueDate": "2026-09-14",
+      "ransomware": "Unknown",
+      "action": "Apply mitigations in accordance with vendor instructions, ensuring compliance with CISA’s BOD 26-04 Prioritizing Security Updates Based on Risk (see URL in Notes) guidance and CISA’s “Forensics Triage Requirements” (see URL in Notes). Follow applicable BOD 26-04 guidance for cloud services or discontinue use of the product if mitigations are unavailable. Stakeholders are responsible for evaluating each asset's internet exposure and ensuring adherence to BOD 26-04 patching guidelines.",
+      "notes": "https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/ ; BOD 26-04: https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk ; Forensics Triage Requirements: https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk ; https://nvd.nist.gov/vuln/detail/CVE-2026-81578",
+      "references": [
+        "https://nvd.nist.gov/vuln/detail/CVE-2026-81578",
+        "https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk",
+        "https://www.cisa.gov/news-events/directives/bod-26-04-prioritizing-security-updates-based-risk",
+        "https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/"
+      ],
+      "cwes": [
+        "CWE-306"
+      ]
+    },
     {
       "cve": "CVE-2023-49105",
       "vendor": "ownCloud",

@@ -7,7 +7,7 @@ import {
   aggregateTechniques,
   classifyCampaignsByWindow,
   classifyKevsByWindow,
-  classifySignalsByWindow,
+  classifyReportsByWindow,
   createEvidenceWindow,
   normalizeEvidenceWindowPreset,
   normalizeTopFocus,
@@ -98,8 +98,8 @@ test("KEV classification uses dateAdded with an inclusive cutoff date", () => {
   assert.deepEqual(result.future.map(({ cve }) => cve), ["CVE-FUTURE"]);
 });
 
-test("current-signal classification uses source publication dates without inventing activity dates", () => {
-  const result = classifySignalsByWindow([
+test("current-report classification uses source publication dates without inventing activity dates", () => {
+  const result = classifyReportsByWindow([
     { id: "recent-publication", publishedAt: "2026-08-30", observedAt: null },
     { id: "older-publication", publishedAt: "2026-05-01", observedAt: "2026-08-30" },
     { id: "undated", publishedAt: null, observedAt: "2026-08-30" },
@@ -108,7 +108,7 @@ test("current-signal classification uses source publication dates without invent
   assert.deepEqual(result.inWindow.map(({ id }) => id), ["recent-publication"]);
   assert.deepEqual(result.outOfWindow.map(({ id }) => id), ["older-publication"]);
   assert.deepEqual(result.undated.map(({ id }) => id), ["undated"]);
-  assert.ok(result.all.every((signal) => signal.evidenceWindow.field === "publishedAt"));
+  assert.ok(result.all.every((report) => report.evidenceWindow.field === "publishedAt"));
 });
 
 test("Top-N focus accepts only the approved values and preserves cutoff ties", () => {

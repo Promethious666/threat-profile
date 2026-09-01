@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; base-uri 'none'; object-src 'none'; form-action 'self'; script-src 'self'; script-src-attr 'none'; style-src 'self'; style-src-attr 'none'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'none'; media-src 'none'; worker-src 'none'; manifest-src 'self'; upgrade-insecure-requests">
     <meta name="referrer" content="no-referrer">
-    <meta name="description" content="Evidence-led cyber threat profiles with ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
+    <meta name="description" content="Generate a concise OSINT threat brief from automatically refreshed public reporting, ATT&CK context, CISA KEV and Microsoft security hunting starters.">
     <meta name="theme-color" content="#091018">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Threat Profile Workbench">
-    <meta property="og:description" content="Evidence-led actor relevance, ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
+    <meta property="og:description" content="Automatically refreshed public reporting, historical ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
     <meta property="og:url" content="https://promethious666.github.io/threat-profile/">
     <meta property="og:image" content="https://promethious666.github.io/threat-profile/assets/threat-profile-linkedin-feature.png">
     <meta property="og:image:width" content="1729">
@@ -17,7 +17,7 @@
     <meta property="og:image:alt" content="Pixel-art cyber analyst using the Threat Profile Workbench for actor intelligence, ATT&amp;CK techniques, KQL hunting and evidence-driven prioritisation">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Threat Profile Workbench">
-    <meta name="twitter:description" content="Evidence-led actor relevance, ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
+    <meta name="twitter:description" content="Automatically refreshed public reporting, historical ATT&CK context, CISA KEV triage and Microsoft security hunting starters.">
     <meta name="twitter:image" content="https://promethious666.github.io/threat-profile/assets/threat-profile-linkedin-feature.png">
     <title>Threat Profile Workbench</title>
     <link rel="stylesheet" href="./styles.css">
@@ -66,11 +66,11 @@
     <main id="main-content" class="shell" aria-busy="true">
       <section class="workspace-heading" aria-labelledby="workspace-title">
         <div>
-          <p class="eyebrow">Evidence-led cyber threat intelligence</p>
-          <h1 id="workspace-title">Turn threat context into defensive decisions.</h1>
+          <p class="eyebrow">OSINT threat brief generator</p>
+          <h1 id="workspace-title">See what matters, why it matches and what to do next.</h1>
         </div>
         <p>
-          Profile-fit ranking, ATT&amp;CK relationships, KEV exposure context and Microsoft security hunts—without presenting inference as direct targeting.
+          Current public reporting leads the brief. Historical ATT&amp;CK context, KEV exposure triage and Microsoft security hunts support the investigation.
         </p>
       </section>
 
@@ -78,18 +78,18 @@
         <div class="builder-copy">
           <span class="context-label" id="profile-mode">Example context</span>
           <h2 id="profile-heading">Define the operating context</h2>
-          <p>Sector and country drive the evidence-backed profile. Organisation and technology remain optional context.</p>
+          <p>Start with sector and country. Add organisation aliases, technologies or a watchlist to make the public-report search more specific.</p>
           <ol class="quick-guide" aria-label="How to use the workbench">
-            <li><span>1</span><div><strong>Set context</strong><small>Choose sector and country; optional text stays out of share links.</small></div></li>
-            <li><span>2</span><div><strong>Review priorities</strong><small>Start with key judgements, actions and evidence gaps.</small></div></li>
-            <li><span>3</span><div><strong>Validate &amp; export</strong><small>Test hunts, confirm exposure and save the report.</small></div></li>
+            <li><span>1</span><div><strong>Set context</strong><small>Optional private terms stay out of share links.</small></div></li>
+            <li><span>2</span><div><strong>Review current reports</strong><small>See exactly why each source was included.</small></div></li>
+            <li><span>3</span><div><strong>Validate &amp; export</strong><small>Open sources, test hunts and save the brief.</small></div></li>
           </ol>
         </div>
 
         <form id="profile-form" class="profile-form">
           <label>
-            <span>Organisation <small>optional, kept out of shared links</small></span>
-            <input id="organisation" name="organisation" type="text" autocomplete="organization" maxlength="200" placeholder="Organisation context">
+            <span>Organisation / brands <small>optional, comma-separated and private</small></span>
+            <input id="organisation" name="organisation" type="text" autocomplete="organization" maxlength="200" placeholder="Organisation, brand or domain name">
           </label>
 
           <label>
@@ -112,7 +112,12 @@
           </label>
 
           <label>
-            <span>Dated evidence window <small>campaign, KEV and signal dates only</small></span>
+            <span>Actor / campaign watchlist <small>optional, comma-separated and private</small></span>
+            <input id="watchlist" name="watchlist" type="text" maxlength="300" placeholder="Actor alias, campaign name, malware family" autocomplete="off">
+          </label>
+
+          <label>
+            <span>Dated evidence window <small>report, campaign and KEV dates only</small></span>
             <select id="evidence-window" name="evidence-window" aria-describedby="analysis-control-note">
               <option value="7d">1 week</option>
               <option value="14d">2 weeks</option>
@@ -140,7 +145,7 @@
           <p class="form-note" id="analysis-control-note">The time window never removes undated historical actor context. The focus limit drives techniques, software, campaigns, KQL priorities and exports; score ties at the boundary are always kept.</p>
 
           <button class="primary-button" id="analyse-button" type="submit" disabled>
-            Build threat profile
+            Generate OSINT brief
             <span aria-hidden="true">→</span>
           </button>
         </form>
@@ -170,7 +175,7 @@
           <div class="brief-actions">
             <button class="secondary-button" type="button" data-print-report aria-describedby="print-privacy-note">Print / Save PDF</button>
             <button class="secondary-button" id="edit-profile" type="button">Edit context</button>
-            <span class="sr-only" id="print-privacy-note">The report is created locally and includes any organisation and technology text entered. Review it before sharing.</span>
+            <span class="sr-only" id="print-privacy-note">The report is created locally and includes any organisation, technology and watchlist text entered. Review it before sharing.</span>
           </div>
         </section>
 
@@ -188,17 +193,18 @@
         <section class="priority-panel" aria-labelledby="priority-heading">
           <div>
             <p class="eyebrow">Priority actions</p>
-            <h2 id="priority-heading">What the SOC should do next</h2>
+            <h2 id="priority-heading">Recommended analyst actions</h2>
           </div>
           <ol id="priority-actions" class="priority-list"></ol>
         </section>
 
         <nav class="view-nav" aria-label="Threat profile views">
           <a href="#overview" data-view="overview" aria-current="page">Overview</a>
-          <a href="#actors" data-view="actors">Actors &amp; campaigns</a>
-          <a href="#techniques" data-view="techniques">Techniques &amp; KQL</a>
+          <a href="#activity" data-view="activity">Current reporting</a>
+          <a href="#actors" data-view="actors">Historical actors</a>
+          <a href="#techniques" data-view="techniques">Detection pack</a>
           <a href="#vulnerabilities" data-view="vulnerabilities">Exposure / KEV</a>
-          <a href="#models" data-view="models">Diamond &amp; Pyramid</a>
+          <a href="#models" data-view="models">Advanced models</a>
           <a href="#sources" data-view="sources">Sources &amp; method</a>
         </nav>
 
@@ -214,18 +220,18 @@
             <article class="work-card span-three signal-summary-card">
               <div class="card-heading">
                 <div>
-                  <span class="card-kicker">Dated source signals</span>
-                  <h3>Current threat context</h3>
+                  <span class="card-kicker">Automated public reporting</span>
+                  <h3>Most relevant current reports</h3>
                 </div>
-                <a href="#actors" data-view-link="actors">Inspect evidence</a>
+                <a href="#activity" data-view-link="activity">Inspect evidence</a>
               </div>
-              <div id="overview-signals" class="signal-summary-list"></div>
+              <div id="overview-reports" class="signal-summary-list"></div>
             </article>
             <article class="work-card span-two">
               <div class="card-heading">
                 <div>
-                  <span class="card-kicker">Candidates</span>
-                  <h3>Leading actor matches</h3>
+                  <span class="card-kicker">Historical context</span>
+                  <h3>ATT&amp;CK actor candidates</h3>
                 </div>
                 <a href="#actors" data-view-link="actors">Investigate all</a>
               </div>
@@ -244,8 +250,8 @@
             <article class="work-card">
               <div class="card-heading">
                 <div>
-                  <span class="card-kicker">Activity</span>
-                  <h3>Campaign context</h3>
+                  <span class="card-kicker">Named activity</span>
+                  <h3>Campaign reporting</h3>
                 </div>
               </div>
               <div id="overview-campaigns"></div>
@@ -272,25 +278,34 @@
           </div>
         </section>
 
+        <section class="view-panel" id="activity" data-panel="activity" hidden aria-labelledby="activity-heading">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Current public reporting</p>
+              <h2 id="activity-heading">Reports that match this profile</h2>
+            </div>
+            <p>Collected automatically from government and vendor threat-research feeds. Every card shows why it was included and links to the original source.</p>
+          </div>
+          <section class="signal-panel" aria-labelledby="reports-heading">
+            <div class="section-title compact-title">
+              <div>
+                <p class="eyebrow">Evidence-led triage</p>
+                <h3 id="reports-heading">Dated report matches</h3>
+              </div>
+              <p id="current-report-count" aria-live="polite"></p>
+            </div>
+            <div id="current-report-list" class="signal-list"></div>
+          </section>
+        </section>
+
         <section class="view-panel" id="actors" data-panel="actors" hidden aria-labelledby="actors-heading">
           <div class="section-title">
             <div>
-              <p class="eyebrow">Threat landscape</p>
-              <h2 id="actors-heading">Actors &amp; linked campaigns</h2>
+              <p class="eyebrow">Historical background</p>
+              <h2 id="actors-heading">ATT&amp;CK actors &amp; linked campaigns</h2>
             </div>
-            <p>Profile fit measures how discriminating the recorded sector and country context is. It is not likelihood or attribution confidence.</p>
+            <p>This view provides background for investigation. Profile fit is not a current targeting claim, probability or attribution confidence.</p>
           </div>
-
-          <section class="signal-panel" aria-labelledby="signals-heading">
-            <div class="section-title compact-title">
-              <div>
-                <p class="eyebrow">Current signals</p>
-                <h3 id="signals-heading">Dated, provenance-first context</h3>
-              </div>
-              <p id="current-signal-count" aria-live="polite"></p>
-            </div>
-            <div id="current-signal-list" class="signal-list"></div>
-          </section>
 
           <div class="filter-bar">
             <label>
@@ -450,21 +465,21 @@
               <p>The selected window applies only to source publication dates, ATT&amp;CK <code>last_seen</code> and CISA <code>dateAdded</code>. Top-N focus recalculates downstream priorities and retains all score ties.</p>
             </article>
             <article class="work-card">
-              <span class="card-kicker">Current signals</span>
-              <h3>Human-reviewed provenance</h3>
-              <p>The dated signal layer uses authoritative source claims with explicit entity types and caveats. It complements the historical score and never silently changes it.</p>
+              <span class="card-kicker">Automated public reporting</span>
+              <h3>Same-report correlation</h3>
+              <p>Reports are matched from their own title and summary. Country-only mentions never create sector relevance, and every result retains its original source link.</p>
             </article>
             <article class="work-card">
               <span class="card-kicker">Refresh model</span>
               <h3>Automated where defensible</h3>
-              <p>ATT&amp;CK, MISP targeting context and CISA KEV refresh automatically every six hours through GitHub Actions. Current signals require human review; GitHub may pause schedules after 60 days without public-repository activity.</p>
+              <p>ATT&amp;CK, MISP targeting context, CISA KEV and four public reporting feeds refresh automatically every six hours through GitHub Actions. GitHub may pause schedules after 60 days without public-repository activity.</p>
             </article>
           </div>
 
           <div class="export-panel">
             <div>
               <h3>Take the assessment with you</h3>
-              <p id="export-privacy-note">Save a concise decision report, export the complete data, or continue analysis in ATT&amp;CK Navigator. PDF and complete JSON exports are created locally and may include organisation or technology text entered—review them before sharing. Navigator exports exclude both fields.</p>
+              <p id="export-privacy-note">Save a concise decision report, export the complete data, or continue analysis in ATT&amp;CK Navigator. PDF and complete JSON exports are created locally and may include organisation, technology or watchlist text—review them before sharing. Share links and Navigator exports exclude all three fields.</p>
             </div>
             <div class="export-actions">
               <button class="secondary-button" type="button" data-print-report aria-describedby="export-privacy-note">Print / Save PDF</button>
@@ -476,7 +491,7 @@
 
         <section class="notice evidence-boundary">
           <strong>Evidence boundary.</strong>
-          This workbench assesses profile relevance from public structured intelligence. It does not claim direct targeting, confirmed exposure or production-ready detections without the supporting evidence.
+          Current reports are automated OSINT triage leads; historical actor scores are supporting context. Neither claims direct targeting, confirmed exposure or production-ready detections without supporting evidence.
         </section>
 
         <section class="print-report" id="print-report-output" aria-label="Printable threat profile report">
@@ -489,7 +504,7 @@
 
     <footer class="site-footer">
       <div class="shell footer-inner">
-        <p>Public structured intelligence with visible source, date and evidence boundaries.</p>
+        <p>Automated public reporting with visible source, date and evidence boundaries.</p>
         <a href="#sources" data-view-link="sources">Methodology and sources</a>
       </div>
     </footer>

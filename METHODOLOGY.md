@@ -2,10 +2,11 @@
 
 ## Assessment language
 
-Threat Profile produces a **profile relevance inference** from public historical metadata. It does not estimate probability, declare a threat actor active, attribute an incident, or prove that a named organisation was targeted.
+Threat Profile produces a current OSINT triage brief supported by a **profile relevance inference** from public historical metadata. It does not estimate probability, declare a threat actor active, attribute an incident, or prove that a named organisation was targeted.
 
-The interface keeps two ideas separate:
+The interface keeps three ideas separate:
 
+- **Current reporting relevance** describes why a dated report was included for analyst review.
 - **Profile fit** describes how specifically an actor record matches the selected sector and country.
 - **Analytic confidence** describes the strength and timeliness of the supporting targeting evidence.
 
@@ -53,15 +54,25 @@ The picker applies only where the source supplies a defensible date:
 
 - ATT&CK campaigns use `last_seen`;
 - CISA KEV records use `dateAdded`, which means catalogue addition—not exploitation date; and
-- curated current signals use `publishedAt`, which means source publication—not necessarily activity date.
+- current public reports use `publishedAt`, which means source publication—not necessarily activity date.
 
 Undated targeting attributes and ATT&CK actor-to-technique/software relationships remain visible as historical context. “All available” means all valid dated records through the snapshot date; undated, invalid and future-dated records remain separately classified rather than being described as in-window. Empty states disclose excluded counts, and the complete JSON export retains the excluded records.
 
-## Current threat signals
+## Current public reporting
 
-The curated signal layer complements, but never changes, the historical profile-fit score. A signal may match the selected sector, country or both. Sector and country claims are treated as independent unless the source explicitly confirms their intersection.
+The scheduled workflow collects bounded entries from the UK NCSC, CISA, Google Threat Intelligence and Microsoft Security Blog feeds. It retains the title, bounded summary, publication date, original HTTPS link, source provenance, named entities and deterministic sector/country tags. Feed content is treated as untrusted data.
 
-Every signal records its entity type, authoritative source, evidence tier, source publication date, claim-level context and caveats. Threat actor groups and ransomware families are not conflated: Scattered Spider and ShinyHunters are group entities, while Qilin is represented as a ransomware family operated through a ransomware-as-a-service model. A recent publication is evidence recency, not proof of a currently active intrusion.
+Matching is performed from each individual report's own text. The descending relevance order is:
+
+1. organisation or brand mention;
+2. sector and country present in the same report;
+3. sector plus supplied technology;
+4. sector relevance; and
+5. analyst watchlist mention.
+
+A country-only mention is excluded, so selecting a country never makes the same actor appear across unrelated sectors. Organisation, technology and watchlist terms are evaluated locally in the browser and excluded from share links. A direct name mention is still not proof of compromise or deliberate targeting.
+
+Threat entities are recognised from ATT&CK actor/software aliases and bounded naming patterns used by public reporting. New names can therefore be surfaced before ATT&CK adds them, without hardcoding specific actors into the product. A report is labelled **campaign reporting** only when its own title or summary describes a campaign or named operation.
 
 ## Techniques and software
 
@@ -124,4 +135,4 @@ Normalisation retains assertion-level URLs where the upstream structured record 
 
 An undated historical targeting attribute does not become current simply because its source file was refreshed today.
 
-The automated refresh applies to ATT&CK, MISP Galaxy targeting context and CISA KEV. Current signals require human review before they enter the curated provenance file; the build validates their schema and deploys them with the other data.
+The automated refresh applies to ATT&CK, MISP Galaxy targeting context, CISA KEV and the four public reporting feeds. Every generated snapshot is schema-validated before deployment. Failed feeds reuse validated last-known-good reporting where available and are visibly marked stale.

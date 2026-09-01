@@ -1,0 +1,1658 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-01T08:06:34.664Z",
+  "methodology": {
+    "purpose": "Automated, dated public reporting for analyst triage.",
+    "matchingPolicy": "A report is matched from its own text. Country-only matches never create sector relevance.",
+    "evidencePolicy": "A direct name mention is not proof of compromise or deliberate targeting; analysts must verify the source.",
+    "campaignPolicy": "Campaign labels are used only when the source itself describes a campaign or named operation."
+  },
+  "sources": [
+    {
+      "id": "ncsc-uk",
+      "name": "UK NCSC Threat Reports",
+      "authority": "government",
+      "url": "https://www.ncsc.gov.uk/api/1/services/v1/report-rss-feed.xml",
+      "homepage": "https://www.ncsc.gov.uk/section/keep-up-to-date/threat-reports",
+      "status": "current",
+      "checkedAt": "2026-09-01T08:06:34.664Z",
+      "lastSuccessfulRefresh": "2026-09-01T08:06:34.664Z",
+      "recordCount": 20,
+      "error": null
+    },
+    {
+      "id": "cisa-advisories",
+      "name": "CISA Cybersecurity Advisories",
+      "authority": "government",
+      "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml",
+      "homepage": "https://www.cisa.gov/news-events/cybersecurity-advisories",
+      "status": "current",
+      "checkedAt": "2026-09-01T08:06:34.664Z",
+      "lastSuccessfulRefresh": "2026-09-01T08:06:34.664Z",
+      "recordCount": 30,
+      "error": null
+    },
+    {
+      "id": "google-threat-intelligence",
+      "name": "Google Threat Intelligence",
+      "authority": "vendor-observed",
+      "url": "https://cloudblog.withgoogle.com/topics/threat-intelligence/rss/",
+      "homepage": "https://cloud.google.com/blog/topics/threat-intelligence",
+      "status": "current",
+      "checkedAt": "2026-09-01T08:06:34.664Z",
+      "lastSuccessfulRefresh": "2026-09-01T08:06:34.664Z",
+      "recordCount": 20,
+      "error": null
+    },
+    {
+      "id": "microsoft-threat-intelligence",
+      "name": "Microsoft Security Blog",
+      "authority": "vendor-observed",
+      "url": "https://www.microsoft.com/en-us/security/blog/feed/",
+      "homepage": "https://www.microsoft.com/en-us/security/blog/topic/threat-intelligence/",
+      "status": "current",
+      "checkedAt": "2026-09-01T08:06:34.664Z",
+      "lastSuccessfulRefresh": "2026-09-01T08:06:34.664Z",
+      "recordCount": 10,
+      "error": null
+    }
+  ],
+  "reports": [
+    {
+      "id": "osint-3b9bb67e082f2d3b",
+      "title": "Financially Motivated Threat Actor BREEZE COMET Targets Brazil",
+      "summary": "Introduction Beginning in 2024 Mandiant investigated a string of compromises affecting Brazilian financial services, retail, and eCommerce organizations. Google Threat Intelligence Group (GTIG) tracks this activity as BREEZE COMET (formerly UNC5669), a financially motivated threat actor specializing in manipulating payment systems and banking software in Brazil to conduct fraudulent transfers. This activity overlaps with operations publicly reported as Plump Spider and SHADOW-AETHER-064 . In this blog, we detail BREEZE COMET’s tactics and toolkit, and provide mitigation recommendations and detections to support organizations in defending against this active and developing threat. BREEZE COMET tactics have evolved over time to leverage a customized malware suite and compromised, trusted websites to facilitate initial access, command and control (C2), and to interact with financial softwa…",
+      "publishedAt": "2026-09-01",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/financially-motivated-threat-actor-breeze-comet-targets-brazil/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "actor-report",
+      "entities": [
+        {
+          "id": "UNMAPPED-eb71a3ffce",
+          "name": "UNC5669",
+          "entityType": "unmapped-threat-actor"
+        },
+        {
+          "id": "UNMAPPED-50caecc0a0",
+          "name": "BREEZE COMET",
+          "entityType": "unmapped-threat-actor"
+        }
+      ],
+      "actorIds": [],
+      "sectors": [
+        "Banks",
+        "Financial Services",
+        "Retail"
+      ],
+      "countries": [
+        "BR"
+      ]
+    },
+    {
+      "id": "osint-562c0e20453458b7",
+      "title": "CISA Adds Two Known Exploited Vulnerabilities to Catalog",
+      "summary": "CISA has added two new vulnerabilities to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. &nbsp; CVE-2026-81578 PaperCut NG/MF Missing Authentication for Critical Function Vulnerability&nbsp; CVE-2026-82078 PaperCut NG/MF Unsafe Reflection Vulnerability&nbsp; These types of vulnerabilities are a frequent attack vector for malicious cyber actors and pose significant risks to the federal enterprise.&nbsp; Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediation of high-risk vulnerabilities, specifically those identified by Common Vulnerabilities and Exposures (CVEs) listed in CISA’s KEV Catalog o…",
+      "publishedAt": "2026-08-31",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/31/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-3a4096e5ddae8271",
+      "title": "TerminalFix campaign deploys a reverse tunnel through multistage intrusion",
+      "summary": "Microsoft Threat Intelligence provides analysis of a ClickFix campaign that uses fake CAPTCHA prompts, DLL sideloading, and a reverse tunnel, with detections and hunting guidance. The post TerminalFix campaign deploys a reverse tunnel through multistage intrusion appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-29",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/28/terminalfix-campaign-deploys-reverse-tunnel-through-multistage-intrusion/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "campaign-report",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-19fa0ff3abadb087",
+      "title": "All-Line Equipment Company Fuel-Boss",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow attackers to execute arbitrary commands or code remotely on affected systems. The following versions of All-Line Equipment Company Fuel-Boss are affected: Fuel-Boss V1 Standard &gt;=|&lt;=PHP_7.1.5_7.1.5 (CVE-2018-19518, CVE-2019-11043) Fuel-Boss V1 Portal &gt;=|&lt;=PHP_7.1.5_7.1.5 (CVE-2018-19518, CVE-2019-11043) Fuel-Boss V1 Master/Slave &gt;=|&lt;=PHP_7.1.5_7.1.5 (CVE-2018-19518, CVE-2019-11043) Fuel-Boss V1 Backflush Systems &gt;=|&lt;=PHP_7.1.5_7.1.5 (CVE-2018-19518, CVE-2019-11043) CVSS Vendor Equipment Vulnerabilities v3 8.7 All-Line Equipment Company All-Line Equipment Company Fuel-Boss Improper Neutralization of Argument Delimiters in a Command ('Argument Injection'), Buffer Copy without Checking Size of Input ('Classic Buffer Overflow') Background Critical Infrastructure Sectors: Critical Manufactu…",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-239-02",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-efaf568cbca9f21e",
+      "title": "Applied Systems Engineering ASE2000 V2 Communications Test Set",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow an attacker to read or write arbitrary local files, cause the application to issue outbound network requests, or intercept the connection to impersonate the trusted peer, complete the TLS handshake, and read or modify the protected communications. The following versions of Applied Systems Engineering ASE2000 V2 Communications Test Set are affected: ASE2000 &gt;=2.25|&lt;=2.37 (CVE-2018-1285, CVE-2026-18717) CVSS Vendor Equipment Vulnerabilities v3 9.8 Applied Systems Engineering Applied Systems Engineering ASE2000 V2 Communications Test Set Improper Restriction of XML External Entity Reference, Improper Certificate Validation Background Critical Infrastructure Sectors: Chemical, Critical Manufacturing, Energy, Water and Wastewater Countries/Areas Deployed: Worldwide Company Headquarters Location: United State…",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-239-04",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure",
+        "Manufacturing"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-6edaa432ae0551ea",
+      "title": "CISA Adds Three Known Exploited Vulnerabilities to Catalog",
+      "summary": "CISA has added three new vulnerabilities to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. CVE-2023-49105 ownCloud Improper Authentication Vulnerability CVE-2026-53362 Linux Kernel Unspecified Vulnerability CVE-2026-66384 JFrog Artifactory Improper Limitation of a Pathname to a Restricted Directory Vulnerability&nbsp; These types of vulnerabilities are a frequent attack vector for malicious cyber actors and pose significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediation of high-risk vulnerabilities, specifically those identified by Common Vulnerabilit…",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/27/cisa-adds-three-known-exploited-vulnerabilities-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-bae9bac9c33036e4",
+      "title": "Ebyte NA111-M",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow an attacker to fully compromise the device. The following versions of Ebyte NA111-M are affected: NA111-M Firmware 9013-2-17 (CVE-2026-73125, CVE-2026-76179, CVE-2026-75814, CVE-2026-76940, CVE-2026-77966, CVE-2026-73809, CVE-2026-71187, CVE-2026-75548, CVE-2026-69658, CVE-2026-76133, CVE-2026-73819, CVE-2026-77975, CVE-2026-77977) CVSS Vendor Equipment Vulnerabilities v3 9.8 Ebyte Ebyte NA111-M Missing Authentication for Critical Function, Use of GET Request Method With Sensitive Query Strings, Cross-Site Request Forgery (CSRF), Improper Restriction of Excessive Authentication Attempts, Missing Authorization, Cleartext Transmission of Sensitive Information, Use of Client-Side Authentication, Improper Restriction of Rendered UI Layers or Frames, Use of a Broken or Risky Cryptographic Algorithm, Weak Authentic…",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-239-05",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-4318691d8f4363c6",
+      "title": "Mitsubishi Electric CNC Series (Update A)",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could allow a remote attacker to cause an out-of-bounds read, resulting in a denial-of-service condition in the affected products. The following versions of Mitsubishi Electric CNC Series (Update A) are affected: Mitsubishi Electric M800VW (BND-2051W000) &lt;=BB (CVE-2025-2399) Mitsubishi Electric M800VS (BND-2052W000) &lt;=BB (CVE-2025-2399) Mitsubishi Electric M80V (BND-2053W000) &lt;=BB (CVE-2025-2399) Mitsubishi Electric M80VW (BND-2054W000) &lt;=BB (CVE-2025-2399) Mitsubishi Electric M800W (BND-2005W000) &lt;=FM (CVE-2025-2399) Mitsubishi Electric M800S (BND-2006W000) &lt;=FM (CVE-2025-2399) Mitsubishi Electric M80 (BND-2007W000) &lt;=FM (CVE-2025-2399) Mitsubishi Electric M80W (BND-2008W000) &lt;=FM (CVE-2025-2399) Mitsubishi Electric E80 (BND-2009W000) &lt;=FM (CVE-2025-2399) Mitsubishi Electric C80 (BND-2036W000) ve…",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-078-05",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-af07c1ae960ade5c",
+      "title": "Mitsubishi Electric Multiple FA Products (Update D)",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could allow a remote attacker to cause a denial-of-service (DoS) condition, a timeout error, or a communication delay by sending a specially crafted UDP packet to the product. The following versions of Mitsubishi Electric Multiple FA Products (Update D) are affected: Mitsubishi Electric CC-Link IE TSN Remote I/O module NZ2GN2S1-32D &lt;=09 (CVE-2025-3511) Mitsubishi Electric CC-Link IE TSN Remote I/O module NZ2GN2S1-32T &lt;=09 (CVE-2025-3511) Mitsubishi Electric CC-Link IE TSN Remote I/O module NZ2GN2S1-32TE &lt;=09 (CVE-2025-3511) Mitsubishi Electric CC-Link IE TSN Remote I/O module NZ2GN2S1-32DT &lt;=09 (CVE-2025-3511) Mitsubishi Electric CC-Link IE TSN Remote I/O module NZ2GN2S1-32DTE &lt;=09 (CVE-2025-3511) Mitsubishi Electric CC-Link IE TSN Remote I/O module NZ2GN2B1-32D &lt;=09 (CVE-2025-3511) Mitsubishi Electric CC-…",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-25-128-03",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-74e74e3707ebacb8",
+      "title": "Rockwell Automation OTTO Fleet Manager",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could reduce the computational cost required for an attacker to perform offline brute-force attacks against stored password hashes. The following versions of Rockwell Automation OTTO Fleet Manager are affected: OTTO Fleet Manager &lt;=V2.36.2 (CVE-2026-75112) CVSS Vendor Equipment Vulnerabilities v3 6.8 Rockwell Automation Rockwell Automation OTTO Fleet Manager Use of Password Hash With Insufficient Computational Effort Background Critical Infrastructure Sectors: Critical Manufacturing, Transportation Systems Countries/Areas Deployed: Worldwide Company Headquarters Location: United States Vulnerabilities Expand All + CVE-2026-75112 A security issue exists within OTTO Fleet Manager. The vulnerability stems from the use of an insufficient work factor in the bcrypt password hashing implementation, which could reduce the comput…",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-239-03",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure",
+        "Manufacturing",
+        "Transportation"
+      ],
+      "countries": [
+        "US"
+      ]
+    },
+    {
+      "id": "osint-52729de706686742",
+      "title": "​​​​​​What’s new in Microsoft Security: August 2026",
+      "summary": "This month’s updates provide new capabilities to help organizations gain insights into agent activity, expand security coverage across supported environments, and enhance security management across their environments. The post ​​​​​​What’s new in Microsoft Security: August 2026 appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/27/whats-new-in-microsoft-security-august-2026/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-7d2e5cebe3907847",
+      "title": "Xiiaozet LK100W",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow an attacker to take control over the device. The following versions of Xiiaozet LK100W are affected: LK100W &lt;2.1.240 (CVE-2026-78037, CVE-2026-78239, CVE-2026-76943) CVSS Vendor Equipment Vulnerabilities v3 9.8 Xiiaozet Xiiaozet LK100W Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection'), Missing Authentication for Critical Function, Authentication Bypass Using an Alternate Path or Channel Background Critical Infrastructure Sectors: Information Technology Countries/Areas Deployed: Worldwide Company Headquarters Location: China Vulnerabilities Expand All + CVE-2026-78037 Xiiaozet LK100W is vulnerable to OS command injection through its web-based management interface. An authenticated attacker may be able to execute arbitrary operating system commands with elevated privi…",
+      "publishedAt": "2026-08-27",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-239-01",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure"
+      ],
+      "countries": [
+        "CN"
+      ]
+    },
+    {
+      "id": "osint-7b83f39a58626657",
+      "title": "CISA Adds Six Known Exploited Vulnerabilities to Catalog",
+      "summary": "CISA has added six new vulnerabilities to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. CVE-2015-3246 Red Hat Libuser Race Condition Vulnerability CVE-2015-5287 Red Hat Automatic Bug Reporting Tool Privilege Escalation Vulnerability CVE-2019-1068 Microsoft SQL Server Remote Code Execution Vulnerability CVE-2021-23758 Ajax.NET Professional Deserialization of Untrusted Data Vulnerability CVE-2022-0995 Linux Kernel Out-of-Bounds Write Vulnerability CVE-2026-8452 Citrix NetScaler ADC and NetScaler Gateway Improper Restriction of Operations within the Bounds of a Memory Buffer Vulnerability These types of vulnerabilities are a frequent attack vector for malicious cyber actors and pose significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability mana…",
+      "publishedAt": "2026-08-26",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/26/cisa-adds-six-known-exploited-vulnerabilities-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-90a84358a3872971",
+      "title": "CISA Vulnerability Review",
+      "summary": "Most compromises do not rely on advanced techniques or cutting-edge tools. Cyber threat actors scan the internet looking for exposed, well-known software vulnerabilities to exploit. Basic security failures enable most compromises and organizations can reduce their risk by addressing these underlying weaknesses and prioritizing vulnerabilities for action based on the risk they pose. The CISA Vulnerability Review &nbsp; provides organizations with critical insights into the root causes of insecure software and practical steps they can take to address these flaws to prevent exploitation. Analyzing CISA and open source data from fiscal years 2024 and 2025, the review establishes a baseline of today’s vulnerability landscape before AI-enabled vulnerability discovery becomes more widespread. The review demonstrates the importance of&nbsp; Secure by Design principles in shifting cybersecurity…",
+      "publishedAt": "2026-08-26",
+      "url": "https://www.cisa.gov/resources-tools/resources/cisa-vulnerability-review",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-1c8a510b7d00790b",
+      "title": "When AI infrastructure becomes the target: Securing gateways and control points",
+      "summary": "Microsoft Threat Intelligence examines attacks on exposed AI workloads, including LiteLLM gateway exploitation, credential harvesting, persistence, and cryptomining activity. The post When AI infrastructure becomes the target: Securing gateways and control points appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-26",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/26/when-ai-infrastructure-becomes-target-securing-gateways-control-points/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-f728a38d182fe151",
+      "title": "A Tale of Two SOCs: Insights From Two Red Team Assessments",
+      "summary": "Advisory at a Glance Title A Tale of Two SOCs: Insights From Two Red Team Assessments Original Publication&nbsp; August 25, 2026 Executive Summary The Cybersecurity and Infrastructure Security Agency (CISA) conducted simultaneous red team assessments at two organizations and observed different defensive outcomes. In both environments, the red team achieved full domain compromise and accessed sensitive business systems (SBSs) and cloud resources. Organization A failed to detect or contain the activity, but Organization B rapidly identified initial compromise attempts, isolated affected systems, and forced the red team into an assume breach model. This advisory details the red team’s activity and organizations’ defensive actions, offering lessons learned and mitigations to help critical infrastructure organizations strengthen detection, response, and protections in IT, cloud, and operatio…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-237a",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-13529dec89f48bf2",
+      "title": "Bendix EC80 Brake ECU",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow an attacker to cause the loss of ABS functions, steering assist, speedometer, shifting capabilities, or disable automatic traction control. The following versions of Bendix EC80 Brake ECU are affected: EC80ESP+ J1708 Z228999 EC80ESP+ 6S/6M Z228999 EC80ESP+ PLC Z228999&nbsp; EC80ESP+ 2nd CAN Z228999 EC80ESP+ Integrated TPMS Z228999 EC80ESP 6S/6M Z266494&nbsp; EC80ESP PLC Z266494&nbsp; EC80ESP 2nd CAN Z266494 EC80ESP CAN Gateway Z266494&nbsp; EC80ESP 4S/4M Z286098&nbsp; EC80ESP PLC Z286098&nbsp; CVSS Vendor Equipment Vulnerabilities v3 7.5 Bendix Bendix EC80 Brake ECU Stack-based Buffer Overflow, Out-of-bounds Write, Use of Hard-coded Credentials Background Critical Infrastructure Sectors: Transportation Systems Countries/Areas Deployed: United States, Canada Company Headquarters Location: United States Vulnera…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-237-05",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure",
+        "Transportation"
+      ],
+      "countries": [
+        "CA",
+        "US"
+      ]
+    },
+    {
+      "id": "osint-bdf3c3b943da6a2d",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "CISA has added one new vulnerability to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. &nbsp; CVE-2026-60004 Gitea Code Injection Vulnerability This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediation of high-risk vulnerabilities, specifically those identified by Common Vulnerabilities and Exposures (CVEs) listed in CISA’s KEV Catalog on publicly exposed assets that grant total control of the asset post-exploitation, while deferring action for lower-risk vuln…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/25/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-cd40aa1600f62ae4",
+      "title": "Ebyte NE2-D11",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow an attacker to gain unauthorized administrative access, disclose sensitive information, modify device configuration, hijack authenticated sessions, and disrupt device operation. The following versions of Ebyte NE2-D11 are affected: NE2-D11 Firmware FW-9167-0-11 CVSS Vendor Equipment Vulnerabilities v3 9.8 Ebyte Ebyte NE2-D11 Missing Authentication for Critical Function, Cleartext Transmission of Sensitive Information, Insufficiently Protected Credentials, Use of Client-Side Authentication, Use of GET Request Method With Sensitive Query Strings, Cross-Site Request Forgery (CSRF), Improper Restriction of Excessive Authentication Attempts, Improper Restriction of Rendered UI Layers or Frames, Missing Authorization Background Critical Infrastructure Sectors: Critical Manufacturing, Energy Countries/Areas Deployed…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-237-06",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure",
+        "Manufacturing"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-63e36d843533dec6",
+      "title": "FURUNO FA-50 Class B AIS Transponder",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow an attacker to alter device settings. The following versions of FURUNO FA-50 Class B AIS Transponder are affected: FURUNO FA-50 Class B AIS Transponder vers:all/* CVSS Vendor Equipment Vulnerabilities v3 9.1 FURUNO ELECTRIC CO.,LTD. FURUNO FA-50 Class B AIS Transponder Use of Hard-coded Credentials, Missing Authentication for Critical Function Background Critical Infrastructure Sectors: Transportation Systems Countries/Areas Deployed: Worldwide Company Headquarters Location: Japan Vulnerabilities Expand All + CVE-2026-59769 An attacker, who knows the credentials and has access to the in-vessel network to which the device is connected to, may operate the settings screen using that credentials to alter the settings of the device. View CVE Details Affected Products FURUNO FA-50 Class B AIS Transponder Vendor: FU…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-237-07",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure",
+        "Transportation"
+      ],
+      "countries": [
+        "JP"
+      ]
+    },
+    {
+      "id": "osint-131f46a89b408b74",
+      "title": "PayRange API",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could allow a remote, authenticated or unauthenticated attacker to disclose sensitive information, arbitrarily modify the device to cause a denial of service, or alter a devices displayed image. The following versions of PayRange API are affected: PayRange API vers:all/* CVSS Vendor Equipment Vulnerabilities v3 8.8 PayRange PayRange API Missing Authorization Background Critical Infrastructure Sectors: Commercial Facilities Countries/Areas Deployed: United States, Canada Company Headquarters Location: United States Vulnerabilities Expand All + CVE-2026-18965 The affected product is missing proper authorization on management endpoints, which allows verbose details of every device on the PayRange network to be publicly accessible, with or without an account. View CVE Details Affected Products PayRange API Vendor: PayRange Prod…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-237-04",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure"
+      ],
+      "countries": [
+        "CA",
+        "US"
+      ]
+    },
+    {
+      "id": "osint-1cc65a359cf90782",
+      "title": "Rently Smart Home",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could allow an attacker to access sensitive information and override user permissions. The following versions of Rently Smart Home are affected: Smart Home &lt;=20.1.0 CVSS Vendor Equipment Vulnerabilities v3 8.1 Rently Rently Smart Home Insufficiently Protected Credentials Background Critical Infrastructure Sectors: Commercial Facilities, Communications, Information Technology Countries/Areas Deployed: United States, India Company Headquarters Location: United States Vulnerabilities Expand All + CVE-2026-75960 Rently Smart Home versions 20.1.0 and prior are vulnerable to an Insufficiently Protected Credentials vulnerability. This could allow an attacker to retrieve pins including the Master Pin, overriding standard user permissions. View CVE Details Affected Products Rently Smart Home Vendor: Rently Product Version: Rently…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-237-01",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure"
+      ],
+      "countries": [
+        "IN",
+        "US"
+      ]
+    },
+    {
+      "id": "osint-93d0549b2e7ec508",
+      "title": "Siemens SIMATIC IoT2050 Advanced",
+      "summary": "View CSAF Summary SIMATIC IoT2050 Advanced devices running Industrial OS with Node-RED installed contain a missing authentication vulnerability in the Node-RED HTTP interface that could allow an unauthenticated remote attacker to create malicious flows and execute arbitrary code on the underlying server with maximum privileges. Siemens has released a new version for SIMATIC IoT2050 Advanced and strongly recommends to update to the latest version. The following versions of Siemens SIMATIC IoT2050 Advanced are affected: SIMATIC IoT2050 Advanced (6ES7647-0BA00-1YA2) vers:intdot/&lt;4.3.4.1 CVSS Vendor Equipment Vulnerabilities v3 10 Siemens Siemens SIMATIC IoT2050 Advanced Missing Authentication for Critical Function Background Critical Infrastructure Sectors: Chemical, Critical Manufacturing, Energy, Transportation Systems Countries/Areas Deployed: Worldwide Company Headquarters Location:…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-237-03",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure",
+        "Manufacturing",
+        "Transportation"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-8466ee8584a33fb7",
+      "title": "The patch window is collapsing: Why security needs a new control plane",
+      "summary": "Organizations need protection that operates in the gap between discovery and remediation. The post The patch window is collapsing: Why security needs a new control plane appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-25",
+      "url": "https://azure.microsoft.com/en-us/blog/the-patch-window-is-collapsing-why-security-needs-a-new-control-plane/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-4be6e7b5f38a0bbf",
+      "title": "Zoneminder",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could result in full Remote Code Execution (RCE) as the web server user. The following versions of Zoneminder are affected: Zoneminder 1.37.48|1.38.3&nbsp; CVSS Vendor Equipment Vulnerabilities v3 8.8 Zoneminder Zoneminder Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection') Background Critical Infrastructure Sectors: Information Technology Countries/Areas Deployed: Worldwide Company Headquarters Location: United States Vulnerabilities Expand All + CVE-2026-76060 An authenticated OS Command Injection vulnerability exists in ZoneMinder's event export functionality. The exportFile HTTP request parameter is passed unsanitized into a shell command executed via PHP's exec(), allowing any authenticated user with View Events permission to execute arbitrary operating system commands on the serv…",
+      "publishedAt": "2026-08-25",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-237-02",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure"
+      ],
+      "countries": [
+        "US"
+      ]
+    },
+    {
+      "id": "osint-7cdfd185bcfa807b",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "CISA has added one new vulnerability to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. &nbsp; CVE-2026-21962 Oracle HTTP Server and Oracle Weblogic Server Proxy Plug-in Improper Access Control Vulnerability This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediation of high-risk vulnerabilities, specifically those identified by Common Vulnerabilities and Exposures (CVEs) listed in CISA’s KEV Catalog on publicly exposed assets that grant total control of the asse…",
+      "publishedAt": "2026-08-24",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/24/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-b4bdc1ce93f33bd8",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "CISA has added one new vulnerability to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. &nbsp; CVE-2026-73570 Zimbra Collaboration Suite (ZCS) OS Command Injection Vulnerability This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediation of high-risk vulnerabilities, specifically those identified by Common Vulnerabilities and Exposures (CVEs) listed in CISA’s KEV Catalog on publicly exposed assets that grant total control of the asset post-exploitation, while def…",
+      "publishedAt": "2026-08-21",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/21/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-1dec6f2989c01b15",
+      "title": "CISA Adds Two Known Exploited Vulnerabilities to Catalog",
+      "summary": "CISA has added two new vulnerabilities to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. &nbsp; CVE-2026-72529 TrueConf Server Missing Authentication for Critical Function Vulnerability &nbsp; CVE-2026-72530 TrueConf Server Code Injection Vulnerability These types of vulnerabilities are a frequent attack vector for malicious cyber actors and pose significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediation of high-risk vulnerabilities, specifically those identified by Common Vulnerabilities and Exposures (CVEs) listed in CISA’s KEV Catalog on publicly e…",
+      "publishedAt": "2026-08-20",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/20/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-e466cd90008a4db1",
+      "title": "Going with the Flow(s): Distinct Clusters Target Individuals of Interest to Russia",
+      "summary": "Written by: Gabby Roncone, Wesley Shields Overview Google Threat Intelligence Group (GTIG) is tracking three distinct suspected Russian cyber espionage threat clusters abusing legitimate authentication flows to target individuals working in academia, aerospace and defense, governments and think tanks across Europe, as well as academia and think tanks within the United States. Examples of these techniques can be found in our previous blog on UNC6293’s phishing operations. We now track an additional two distinct suspected Russian clusters, UNC7005 and UNC5976, which conduct phishing, abuse OAuth flows, and/or deploy malware to victims. UNC7005 in particular is tied to the hospitality captive portal redirects reported on by Reliaquest and Microsoft . While each group conducts their campaigns differently, they all ultimately demonstrate a focus on abuse of legitimate authentication workflow…",
+      "publishedAt": "2026-08-20",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/distinct-clusters-target-individuals-of-interest-to-russia/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "actor-report",
+      "entities": [
+        {
+          "id": "UNMAPPED-986d60b7cc",
+          "name": "UNC6293",
+          "entityType": "unmapped-threat-actor"
+        },
+        {
+          "id": "UNMAPPED-4c13ebe002",
+          "name": "UNC7005",
+          "entityType": "unmapped-threat-actor"
+        },
+        {
+          "id": "UNMAPPED-6678ba3fe4",
+          "name": "UNC5976",
+          "entityType": "unmapped-threat-actor"
+        }
+      ],
+      "actorIds": [],
+      "sectors": [
+        "Aerospace",
+        "Defense",
+        "Hospitality Leisure"
+      ],
+      "countries": [
+        "RU",
+        "US"
+      ]
+    },
+    {
+      "id": "osint-70f2277fb6a228ef",
+      "title": "Johnson Controls Simplex Incident Manager",
+      "summary": "View CSAF Summary Successful exploitation of this vulnerability could allow a local attacker with low privileges to extract user credentials (passwords and authentication tokens) from system memory, potentially leading to unauthorized access to the application and connected systems. The following versions of Johnson Controls Simplex Incident Manager are affected: Simplex Incident Manager &lt;=V2.01 (CVE-2026-27875) CVSS Vendor Equipment Vulnerabilities v3 5.8 Johnson Controls Inc. Johnson Controls Simplex Incident Manager Cleartext Storage of Sensitive Information in Memory Background Critical Infrastructure Sectors: Critical Manufacturing, Commercial Facilities, Government Services and Facilities, Transportation Systems, Energy Countries/Areas Deployed: Worldwide Company Headquarters Location: Ireland Vulnerabilities Expand All + CVE-2026-27875 The Simplex Incident Manager application…",
+      "publishedAt": "2026-08-20",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-232-01",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Government",
+        "Infrastructure",
+        "Manufacturing",
+        "Transportation"
+      ],
+      "countries": [
+        "IE"
+      ]
+    },
+    {
+      "id": "osint-a8ddc227e8620486",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "CISA has added one new vulnerability to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. &nbsp; CVE-2026-64849 MLflow Server-Side Request Forgery Vulnerability This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediation of high-risk vulnerabilities, specifically those identified by Common Vulnerabilities and Exposures (CVEs) listed in CISA’s KEV Catalog on publicly exposed assets that grant total control of the asset post-exploitation, while deferring action for l…",
+      "publishedAt": "2026-08-19",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/19/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-95cffd3568d060e4",
+      "title": "Defending Against an Active Threat to Siemens S7 Series PLCs",
+      "summary": "Executive summary Note: This advisory relates to an active threat to Siemens S7 Series programmable logic controllers (PLCs). However, ongoing PLC targeting activity is broader than Siemens PLCs. All PLC owners and operators should apply relevant mitigations to reduce the risk to their devices and systems. The Siemens-specific content in this advisory should be understood and applied as one subset of the wider threat landscape. Top Mitigations Inventory&nbsp; all Siemens S7 Series programmable logic controllers (PLCs) Apply&nbsp; critical security patches &nbsp; Ensure&nbsp; PLCs are not&nbsp; accessible &nbsp; from the Internet Strengthen&nbsp; access controls Monitor&nbsp; for unauthorized activity Harden&nbsp; PLC services, protocols, and ladder logic integrity &nbsp; Hunt&nbsp; for anomalies that may indicate a compromise The National Security Agency (NSA), Cybersecurity and Infrast…",
+      "publishedAt": "2026-08-19",
+      "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-231a",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-1017589c2a215350",
+      "title": "Microsoft named a Leader in the Frost Radar™: Cloud Workload Protection Platforms, 2026",
+      "summary": "Microsoft is named a visionary leader in the 2026 Frost Radar for Cloud Workload Protection Platforms, recognized for unified runtime security with Microsoft Defender for Cloud. The post Microsoft named a Leader in the Frost Radar™: Cloud Workload Protection Platforms, 2026 appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-19",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/19/microsoft-named-a-leader-in-the-frost-radar-cloud-workload-protection-platforms-2026/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-4a507963e3890516",
+      "title": "CISA Adds Four Known Exploited Vulnerabilities to Catalog",
+      "summary": "CISA has added four new vulnerabilities to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. &nbsp; CVE-2026-33824 Microsoft Internet Key Exchange (IKE) Service Extensions Double Free Vulnerability CVE-2026-55040 Microsoft SharePoint Weak Authentication Vulnerability CVE-2026-59310 Broadcom VMware vCenter Path Traversal Vulnerability &nbsp; CVE-2026-65400 Apple macOS Improper Authentication Vulnerability These types of vulnerabilities are a frequent attack vector for malicious cyber actors and pose significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediati…",
+      "publishedAt": "2026-08-18",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/18/cisa-adds-four-known-exploited-vulnerabilities-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-c236dab8b21894d5",
+      "title": "CISA Malcolm",
+      "summary": "View CSAF Summary Successful exploitation of these vulnerabilities could allow an attacker to cause a denial-of-service condition or execute arbitrary code. The following versions of CISA Malcolm are affected: Malcolm &lt;26.06.1 (CVE-2026-55676) Malcolm &lt;26.07.0 (CVE-2026-63133, CVE-2026-63134, CVE-2026-63177) Malcolm &lt;=26.07.1 (CVE-2026-19670, CVE-2026-19671) CVSS Vendor Equipment Vulnerabilities v3 8.8 CISA CISA Malcolm Allocation of Resources Without Limits or Throttling, Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal'), Unrestricted Upload of File with Dangerous Type, Incorrect Authorization, Improper Handling of Highly Compressed Data (Data Amplification) Background Critical Infrastructure Sectors: Information Technology Countries/Areas Deployed: Worldwide Company Headquarters Location: United States Vulnerabilities Expand All + CVE-2026-63133 M…",
+      "publishedAt": "2026-08-18",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-230-01",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Infrastructure"
+      ],
+      "countries": [
+        "US"
+      ]
+    },
+    {
+      "id": "osint-cd63a91fd292f487",
+      "title": "Hunting MacSync Stealer infrastructure through behavioral pivots",
+      "summary": "MacSync Stealer rapidly rotates domains to evade detection, but its behavior remains consistent. Learn how Microsoft uncovered 30+ related domains using durable hunting pivots. The post Hunting MacSync Stealer infrastructure through behavioral pivots appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-18",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/18/hunting-macsync-stealer-infrastructure-through-behavioral-pivots/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-55b2e44cec9db9fb",
+      "title": "Siemens Simcenter Nastran",
+      "summary": "View CSAF Summary Simcenter Nastran is affected by a stack overflow vulnerability that could be triggered when an application binary reads arbitrary string as a file argument. If a user is tricked to run one of the impacted application binary with a malicious string, an attacker could leverage the vulnerability to perform remote code execution in the context of the current process. Siemens has released new versions for the affected products and recommends to update to the latest versions. The following versions of Siemens Simcenter Nastran are affected: Simcenter Femap vers:intdot/&lt;2606 (CVE-2026-59086) Simcenter Nastran vers:intdot/&lt;2606 (CVE-2026-59086) CVSS Vendor Equipment Vulnerabilities v3 7.8 Siemens Siemens Simcenter Nastran Stack-based Buffer Overflow Background Critical Infrastructure Sectors: Critical Manufacturing, Defense Industrial Base, Energy, Healthcare and Public…",
+      "publishedAt": "2026-08-18",
+      "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-230-02",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Defense",
+        "Healthcare",
+        "Infrastructure",
+        "Manufacturing"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-4a5b883aab251957",
+      "title": "Staying Ahead of Adversarial AI Through Agentic Source Code Review",
+      "summary": "Written by: Alex Tselevich, Michael Maturi Introduction Adversarial misuse of AI has increased the risk of data theft and extortion events, because when proprietary source code is exposed, defenders must scramble to identify and patch vulnerabilities while attackers deploy machine-speed AI tools against them. By structuring the analysis process, enforcing skeptical validation steps, and injecting domain-specific human expertise directly into the pipeline, we’ve achieved a leap in efficacy. Combining AI models with a deeply structured, human expert-driven orchestration layer to tip the scales so that defenders can beat adversaries to the punch. Today, we use the Agentic Vulnerability Discovery Harness (AVDH) to rapidly analyze code and find exploit paths during proactive reviews, penetration tests, red team operations, and incident response engagements. By combining multi-agent orchestra…",
+      "publishedAt": "2026-08-18",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/staying-ahead-of-adversarial-ai-through-agentic-source-code-review/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-82660a1cedeef7c6",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "CISA has added one new vulnerability to its Known Exploited Vulnerabilities (KEV) Catalog , based on evidence of active exploitation. &nbsp; CVE-2025-62593 Ray-Project Ray Code Injection Vulnerability This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise. Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk establishes vulnerability management requirements for Federal Civilian Executive Branch (FCEB) agencies. BOD 26-04 reinforces the importance of the KEV Catalog and requires federal agencies to prioritize rapid remediation of high-risk vulnerabilities, specifically those identified by Common Vulnerabilities and Exposures (CVEs) listed in CISA’s KEV Catalog on publicly exposed assets that grant total control of the asset post-exploitation, while deferring action for lower…",
+      "publishedAt": "2026-08-17",
+      "url": "https://www.cisa.gov/news-events/alerts/2026/08/17/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "source": {
+        "id": "cisa-advisories",
+        "name": "CISA Cybersecurity Advisories",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-686d9ca1aebb5791",
+      "title": "DeadLock ransomware: Breaking down a Rust-based encryptor with decentralized recovery infrastructure",
+      "summary": "Microsoft Threat Intelligence examines DeadLock ransomware, an emerging financially motivated operation distinguished by its use of decentralized infrastructure to support victim communications, negotiations, and data leak operations alongside double extortion tactics used to pressure victims. The post DeadLock ransomware: Breaking down a Rust-based encryptor with decentralized recovery infrastructure appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-10",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/10/deadlock-ransomware-breaking-down-a-rust-based-encryptor-with-decentralized-recovery-infrastructure/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-0774a4f9f5ede01d",
+      "title": "Microsoft named a Leader in the 2026 IDC MarketScape for MDR/MXDR for the Enterprise",
+      "summary": "Microsoft is named a Leader in the 2026 IDC MarketScape for MDR services. Discover how Microsoft Defender Experts MDR combines AI, threat intelligence, and human expertise. The post Microsoft named a Leader in the 2026 IDC MarketScape for MDR/MXDR for the Enterprise appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-10",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/10/microsoft-named-a-leader-in-the-2026-idc-marketscape-for-mdr-mxdr-for-the-enterprise/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-7b5a120ec5550640",
+      "title": "UNC6671 Rebrands: Multi-Brand Vishing Extortion Targets Financial Services and Enterprise Cloud Environments",
+      "summary": "Written by: Tyler McLellan, Austin Larsen Introduction Google Threat Intelligence Group (GTIG) continues to track UNC6671 actively conducting compromises leading to data theft extortion, despite the alleged announced retirement of the BlackFile extortion brand in May 2026. Telemetry and infrastructure analysis reveal that rather than disbanding, UNC6671 has diversified its operations across multiple extortion fronts including Redact, Pink, Helix, and Falcon. UNC6671 continues to rely on voice phishing (vishing) to target enterprise employees, posing as IT helpdesk staff facilitating mandatory, urgent security migrations. Significantly, the threat actor often contacts employees via their personal mobile devices. These calls lure victims to spoofed login portals where Adversary-in-the-Middle (AiTM) infrastructure intercepts credentials and multi-factor authentication (MFA) tokens. Once se…",
+      "publishedAt": "2026-08-06",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/unc6671-targets-financial-services-and-enterprise-cloud-environments/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "actor-report",
+      "entities": [
+        {
+          "id": "UNMAPPED-22de2fef45",
+          "name": "UNC6671",
+          "entityType": "unmapped-threat-actor"
+        }
+      ],
+      "actorIds": [],
+      "sectors": [
+        "Financial Services"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-074888db532d3c3b",
+      "title": "From open lures to cloaked gates: How a macOS ClickFix campaign learned to hide",
+      "summary": "A macOS ClickFix campaign shifted tactics from openly serving infostealer lures to hiding them behind a browser-fingerprinting gate. The change makes malicious infrastructure harder to detect while giving defenders new hunting opportunities. The post From open lures to cloaked gates: How a macOS ClickFix campaign learned to hide appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-05",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/05/macos-clickfix-campaign-learned-hide/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "campaign-report",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-b00a0bfff2e0a3b8",
+      "title": "​​Microsoft named a Leader in the KuppingerCole Leadership Compass for Cloud Native Application Protection Platforms (CNAPP)",
+      "summary": "Learn why KuppingerCole named Microsoft a Leader in its Leadership Compass: Cloud Native Application Protection Platforms report. The post ​​Microsoft named a Leader in the KuppingerCole Leadership Compass for Cloud Native Application Protection Platforms (CNAPP) appeared first on Microsoft Security Blog .",
+      "publishedAt": "2026-08-05",
+      "url": "https://www.microsoft.com/en-us/security/blog/2026/08/05/microsoft-named-a-leader-in-the-kuppingercole-leadership-compass-for-cloud-native-application-protection-platforms-cnapp/",
+      "source": {
+        "id": "microsoft-threat-intelligence",
+        "name": "Microsoft Security Blog",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-459f40727e656d26",
+      "title": "Batten Down Your Packages: Mitigation Guidance for Supply Chain Compromise",
+      "summary": "Written by: Kelli Vanderlee, Stuart Carrera For years, the cybersecurity industry's understanding of software supply chain compromise has been anchored by a few watershed events, including Russian cyber espionage actor ICE RELIC’s (formerly known as APT29) 2020 compromise of SolarWinds and North Korean cyber espionage actor UNC4736's 2023 compromise of 3CX . However, Google Threat Intelligence Group (GTIG) has been tracking growth in threat activity targeting open source software repositories to conduct supply chain compromises over the past several years. A series of large scale open source software supply chain compromise campaigns in 2025 and the first half of 2026 underscore how important it is that organizations implement defensive strategies that directly address this threat vector. In this blog post, GTIG and Mandiant discuss trends we have observed in threat actor use of softwar…",
+      "publishedAt": "2026-07-30",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/mitigation-guidance-for-supply-chain-compromise/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "actor-report",
+      "entities": [
+        {
+          "id": "G1049",
+          "name": "AppleJeus",
+          "entityType": "threat-actor-group"
+        },
+        {
+          "id": "G0016",
+          "name": "APT29",
+          "entityType": "threat-actor-group"
+        },
+        {
+          "id": "UNMAPPED-99d440aeed",
+          "name": "UNC4736",
+          "entityType": "unmapped-threat-actor"
+        }
+      ],
+      "actorIds": [
+        "G1049",
+        "G0016"
+      ],
+      "sectors": [],
+      "countries": [
+        "KP",
+        "RU"
+      ]
+    },
+    {
+      "id": "osint-7846896441102bae",
+      "title": "Updated Cyber Threat Actor Naming System",
+      "summary": "Update (July 30): A table listing the new names of select prominent threat actors was appended to this post. Introduction Today, Google Threat Intelligence Group (GTIG) will begin rolling out a unified naming schema for tracking threat actors. This new naming taxonomy represents an effort to standardize tracking across platforms and public reporting. Why are we Adopting a Different Naming System? Historically, Mandiant and Google’s Threat Analysis Group (TAG) maintained distinct tracking systems, relying on parallel naming schemas that grew independently over time. The creation of GTIG has necessitated a new, fused tracking system, and a new naming system. Thinking to the future, GTIG’s new system will rely on cryptonyms. Relying on sequential numbers or disparate identifiers (e.g. APT1) fails to provide defenders the critical context needed to operate quickly. Threat tracking shouldn’t…",
+      "publishedAt": "2026-07-24",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/updated-cyber-threat-actor-naming-system/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "actor-report",
+      "entities": [
+        {
+          "id": "G0006",
+          "name": "APT1",
+          "entityType": "threat-actor-group"
+        }
+      ],
+      "actorIds": [
+        "G0006"
+      ],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-b3066badd2990936",
+      "title": "Demystifying AI Exploits: A Blueprint for AI-Assisted Vulnerability Management",
+      "summary": "Written by: Jules Czarniak Introduction As highlighted in the Mandiant M-Trends 2026 report , the mean time-to-exploit (TTE) has dropped to -7 days, meaning vulnerabilities are often exploited a week before a patch even exists. To keep pace, many security teams are exploring how to integrate large language model (LLM) agents into their codebases, development environments and continuous integration and continuous delivery (CI/CD) pipelines for automated vulnerability discovery and remediation. However, deploying privileged artificial intelligence (AI) agents without mature integration processes introduces new architectural risks. In response to customer inquiries about how to safely integrate AI capabilities into vulnerability management workflows, this blog provides actionable guidance from Mandiant Consulting about how to establish operational guardrails for AI assisted vulnerability m…",
+      "publishedAt": "2026-07-16",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/ai-assisted-vulnerability-management/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-e9ca52746d186dd5",
+      "title": "The Risk of Exposed Cloud Functions and How to Harden",
+      "summary": "Written by: Corné de Jong Introduction Mandiant security assessments frequently identify publicly exposed serverless applications that lack authentication, often as a result of specific business requirements. Serverless deployments typically run custom-developed code that incorporates third-party packages, making them targets for a wide range of application-level attacks, including: Local and Remote File Inclusion (LFI/RFI) Command Injection Successful exploitation of these vulnerabilities can grant an attacker full control over the underlying container instance. Such access can serve as a foothold that may ultimately lead to a full compromise of the victim’s cloud environment. Based on lessons learned in customer engagements, in this blog post we describe attack scenarios and provide actionable guidance on how to secure serverless environments. While this analysis focuses on hardening…",
+      "publishedAt": "2026-07-15",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/exposed-cloud-functions-harden/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-c31ad9b12c764b12",
+      "title": "The ‘Ghost’ in the Database: Recovering Active ADFS Signing Keys via Machine DPAPI",
+      "summary": "Written by: Shebin Mathew Introduction The \"Golden SAML\" technique, first described by CyberArk researchers in 2017, and further detailed by Mandiant researchers in 2021 , remains one of the most effective methods for threat actors to forge identity assertions in the Microsoft ecosystem. By obtaining the private key of an ADFS token-signing certificate, an attacker can authenticate as any user to any SAML-federated application, bypassing multifactor authentication (MFA), conditional access, and all identity-based controls. However, during a recent red team engagement, Mandiant discovered that when ADFS certificates are manually rotated, configuration drift can silently leave active signing keys exposed in Machine DPAPI. Specifically, Mandiant discovered that in environments where AutoCertificateRollover is disabled and certificates are manually rotated, the database often becomes a 'gho…",
+      "publishedAt": "2026-07-07",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/recovering-active-adfs-signing-keys-machine-dpapi/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-f8ed994c30d5ec24",
+      "title": "Google’s Continued Disruption of Malicious Residential Proxy Networks",
+      "summary": "Background Today, in coordination with the FBI, Lumen, and others, Google took action against the NetNut residential proxy network, also known as Popa. This action builds on our disruption of the IPIDEA proxy network that took place in January 2026, and is a continuation of Google’s objective to dismantle malicious residential proxy networks. Actions Taken As a part of this disruption we took the following actions: Disabled Google accounts and associated Google services used by NetNut for malware command and control (C2), which directly violates Google’s Terms of Service and Acceptable Use Policy. Shared technical intelligence on NetNut software development kits (SDKs) and backend C2 infrastructure with platform providers, law enforcement, and research firms to help drive ecosystem-wide awareness and enforcement. We ensured Google Play Protect , Android’s built-in security protection, a…",
+      "publishedAt": "2026-07-02",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/google-continued-disruption-residential-proxy-networks/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-b45299410347ea04",
+      "title": "The Bear Necessities: A Look at the Drivers, Dynamics, and Applications of the Pro-Russia Influence Ecosystem",
+      "summary": "Written by: James Sadowski, Alden Wahlstrom Introduction Four years into Russia’s full-scale invasion of Ukraine, the pro-Russia influence ecosystem has evolved from a tool of war back into a global strategic asset. Since the mobilization of this ecosystem to support frontline objectives, we have witnessed the expedited development of new influence assets linked to multiple, expansive, covert information operations (IO) campaigns and a revitalization of pro-Russia hacktivism at an unprecedented scale. While this threat activity initially adapted to encompass Ukraine-related priorities, it is gradually pivoting back to established Russian influence objectives for which the ecosystem was originally honed. This shift is significant because it likely signals increased focus outside of Ukraine, warning that pro-Russia influence activity targeting the European Union (EU), North Atlantic Treat…",
+      "publishedAt": "2026-06-29",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/pro-russia-influence-ecosystem/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": [
+        "RU",
+        "UA"
+      ]
+    },
+    {
+      "id": "osint-97310fabbf139d0d",
+      "title": "STOCKSTAY Another Day: The Latest Addition to Turla’s Intelligence Gathering Apparatus",
+      "summary": "Written by: Jordan Jones Introduction Google Threat Intelligence Group (GTIG) has conducted an in-depth analysis of a .NET backdoor, tracked as STOCKSTAY, that has been continually developed and deployed by the Russia-linked threat actor Turla (aka SUMMIT, Secret Blizzard, VENOMOUS BEAR, UAC-0194) since at least December 2022. Turla has deployed STOCKSTAY against government and military organizations in Ukraine, as well as entities with an interest in Italian foreign policy. Used for ongoing cyber espionage, this backdoor shares significant code and functional overlaps with KAZUAR, a successful toolkit previously attributed to Turla. The group has a long history of targeting a wide range of industries, with a particular focus on western Ministries of Foreign Affairs, and defense organizations within the context of heightened political tensions. Turla, and specifically their longstanding…",
+      "publishedAt": "2026-06-25",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/stockstay-turla-intelligence-gathering/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "actor-report",
+      "entities": [
+        {
+          "id": "G0010",
+          "name": "Turla",
+          "entityType": "threat-actor-group"
+        },
+        {
+          "id": "S0265",
+          "name": "Kazuar",
+          "entityType": "malware-family"
+        }
+      ],
+      "actorIds": [
+        "G0010"
+      ],
+      "sectors": [
+        "Defense",
+        "Government"
+      ],
+      "countries": [
+        "IT",
+        "JO",
+        "RU",
+        "UA"
+      ]
+    },
+    {
+      "id": "osint-d2fd2edad7ca639d",
+      "title": "Zero-Day Exploitation of Vulnerability (CVE-2026-20245) in Cisco Catalyst SD-WAN Manager",
+      "summary": "Written by: Chester Sng, Pete Boonyakarn, Logeswaran Nadarajan, Lukasz Lamparski Introduction In early 2026, Mandiant identified a threat actor targeting SD-WAN infrastructure at a service provider. After gaining initial access, the threat actor exploited a zero-day vulnerability ( CVE-2026-20245 ) in Cisco Catalyst SD-WAN to escalate privileges from a compromised administrative account to root-level access. The vulnerability stems from the device’s file upload feature lacking the ability to properly filter malicious data. Throughout the intrusion, to maintain operational security and avoid detection, the threat actor consistently employed anti-forensic techniques, selectively deleting and restoring system configuration files that were modified during their activities. Key Observations Rogue Peering and Credential Manipulation : In March 2026, a threat actor established initial access v…",
+      "publishedAt": "2026-06-24",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/zero-day-exploitation-cisco-catalyst-sd-wan-manager/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-eb358928c5901e71",
+      "title": "Public and Private Medical Community Targeted by China-Nexus Threat Actor Pursuing Artificial Intelligence, Cyber, Medical, and National Defense Research",
+      "summary": "Written by: Patrick Whitsell, John McGuiness, Muhammad Umair Google Threat Intelligence Group (GTIG) has identified a sophisticated campaign attributed to UNC6508, a People's Republic of China (PRC)-nexus threat actor, targeting institutions in the North American academic, medical, and military research community. While remaining undetected for over a year, the threat actor compromised externally facing web applications, deployed bespoke malware, pivoted to sensitive internal systems, and abused enterprise administrative tools for covert data exfiltration. The threat actor had broad collection aspirations, including sensitive defense intelligence related to national security, Indo-Pacific command operations, artificial intelligence, uncrewed vehicle systems, cyber offensive programs, and medical research. GTIG disrupted the malicious infrastructure associated with this threat actor. Wor…",
+      "publishedAt": "2026-06-15",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/prc-targets-us-medical-research/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "actor-report",
+      "entities": [
+        {
+          "id": "UNMAPPED-63e6146130",
+          "name": "UNC6508",
+          "entityType": "unmapped-threat-actor"
+        }
+      ],
+      "actorIds": [],
+      "sectors": [
+        "Defense"
+      ],
+      "countries": [
+        "CN",
+        "US"
+      ]
+    },
+    {
+      "id": "osint-2ba6a2a91f633141",
+      "title": "ShinyHunters Targets Education Sector with Oracle PeopleSoft Exploit",
+      "summary": "Introduction Mandiant and Google Threat Intelligence Group (GTIG) have identified an active compromise and extortion campaign attributed to UNC6240 (ShinyHunters) targeting Oracle PeopleSoft application infrastructure. The activity was observed between May 27, 2026, and June 9, 2026 and is consistent with the exploitation of CVE-2026-35273 , a critical remote code execution vulnerability (CVSS 9.8) in the Environment Management component. The exploitation of this vulnerability directly aligns with the observed targeting of Environment Management Hub (PSEMHUB) endpoints. Because this activity predates Oracle's June 10, 2026 advisory, the vulnerability was exploited as a zero-day. Upon becoming aware of active scanning and exploitation, we initiated notifications to over 100 global organizations whose IP addresses correlated with potentially vulnerable endpoints. Most of these organizatio…",
+      "publishedAt": "2026-06-11",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/shinyhunters-targets-education-sector-oracle-exploit/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "actor-report",
+      "entities": [
+        {
+          "id": "G1057",
+          "name": "ShinyHunters",
+          "entityType": "threat-actor-group"
+        },
+        {
+          "id": "UNMAPPED-33b8d9f54b",
+          "name": "UNC6240",
+          "entityType": "unmapped-threat-actor"
+        }
+      ],
+      "actorIds": [
+        "G1057"
+      ],
+      "sectors": [
+        "Education"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-aa977c30763e1760",
+      "title": "Seeking Counsel: Ongoing Targeted Campaign Against US Law Firms",
+      "summary": "Written by: Chad Reams, Tufail Ahmed, Keith Knapp, Ashley Frazer, Tyler McLellan Introduction From January through May 2026, Mandiant identified a financially motivated data theft extortion campaign executed by the threat cluster UNC3753 (also tracked as \"Luna Moth,\" “Chatty Spider,” and \"Silent Ransom Group\") targeting dozens of organizations across professional, legal, and financial services in the United States. UNC3753 leverages voice phishing (vishing) and social engineering deception techniques to achieve remote access into corporate environments. Using pretexts such as data migration or invoice related emails, the threat actors initiate phone conversations posing as IT support and convince targets to host screen-sharing sessions and download remote monitoring and management (RMM) utilities. Once inside the environment, the threat actors either directly conduct searches to locate…",
+      "publishedAt": "2026-06-05",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/targeted-campaign-us-law-firms/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "campaign-report",
+      "entities": [
+        {
+          "id": "UNMAPPED-20493d8ba3",
+          "name": "UNC3753",
+          "entityType": "unmapped-threat-actor"
+        }
+      ],
+      "actorIds": [],
+      "sectors": [
+        "Financial Services"
+      ],
+      "countries": [
+        "US"
+      ]
+    },
+    {
+      "id": "osint-6e472c1146c85dae",
+      "title": "2 PhaaS 2 Furious: The Evolution of Chinese-Language Phishing Services",
+      "summary": "While Russian-speaking threat actors have historically dominated the phishing-as-a-service (PhaaS) landscape, a rival ecosystem is rapidly growing within the Chinese-language underground. Google Threat Intelligence Group (GTIG) analyzed a dozen current PhaaS offerings in the Chinese underground, all of them mature services and many likely tied intricately to the broader criminal ecosystem in that region. These services not only lower the barrier to entry for Chinese cyber criminals, but reveal broader patterns on the evolution of social engineering and credential theft. Late last year , Google took legal action against one PhaaS provider and has worked since then to endorse legislation and enact technical safeguards against these types of scams. Within this ecosystem, GTIG has observed a fundamental move away from static password harvesting towards real-time interception and tokenizatio…",
+      "publishedAt": "2026-05-25",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/chinese-language-phishing-services/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": [
+        "CN",
+        "RU"
+      ]
+    },
+    {
+      "id": "osint-90d790d6335d7a08",
+      "title": "Exploitation of KnowledgeDeliver via ViewState Deserialization Vulnerability",
+      "summary": "Written by: Takahiro Sugiyama, Peter Revelant, Mathew Potaczek Introduction In late 2025, Mandiant responded to a security incident involving a compromised web server running KnowledgeDeliver . KnowledgeDeliver is a Learning Management System (LMS) developed by Digital Knowledge commonly used in Japan. Mandiant identified a critical vulnerability that allowed unauthenticated Remote Code Execution (RCE). An unknown threat actor leveraged this access to inject malicious code into the LMS platform, with the goal of infecting users visiting the site. This vulnerability stems from the use of identical pre-shared ASP.NET machine keys across multiple customer deployments. The vulnerability was initially exploited as a zero-day, now tracked as CVE-2026-5426 . The Vulnerability KnowledgeDeliver installations deployed before Feb. 24, 2026 relied on a standardized web.config file provided by the v…",
+      "publishedAt": "2026-05-25",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/knowledgedeliver-viewstate-deserialization-vulnerability/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": [
+        "JP"
+      ]
+    },
+    {
+      "id": "osint-6257462df1733580",
+      "title": "Welcome to BlackFile: Inside a Vishing Extortion Operation",
+      "summary": "Written by: Austin Larsen, Tyler McLellan, Genevieve Stark, Dan Ebreo Introduction Google Threat Intelligence Group (GTIG) has continued to track an expansive extortion campaign by UNC6671, a threat actor operating under the \"BlackFile\" brand, that targets organizations via sophisticated voice phishing (vishing) and single sign-on (SSO) compromise. By leveraging adversary-in-the-middle (AiTM) techniques to bypass traditional perimeter defenses and multi-factor authentication (MFA), UNC6671 gains deep access to cloud environments. The group primarily targets Microsoft 365 and Okta infrastructure, leveraging Python and PowerShell scripts to programmatically exfiltrate sensitive corporate data for subsequent extortion attempts. This post details UNC6671’s attack lifecycle and provides defenders with actionable guidance to detect and mitigate these identity-centric threats. Since emerging i…",
+      "publishedAt": "2026-05-15",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/blackfile-vishing-extortion-operation/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "campaign-report",
+      "entities": [
+        {
+          "id": "UNMAPPED-22de2fef45",
+          "name": "UNC6671",
+          "entityType": "unmapped-threat-actor"
+        }
+      ],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-5845fbb9c4fbfabd",
+      "title": "GTIG AI Threat Tracker: Adversaries Leverage AI for Vulnerability Exploitation, Augmented Operations, and Initial Access",
+      "summary": "Executive Summary Since our February 2026 report on AI-related threat activity, Google Threat Intelligence Group (GTIG) has continued to track a maturing transition from nascent AI-enabled operations to the industrial-scale application of generative models within adversarial workflows. This report, based on insights derived from Mandiant incident response engagements, Gemini, and GTIG’s proactive research, highlights the dual nature of the current threat environment where AI serves as both a sophisticated engine for adversary operations and a high-value target for attacks. We explore the following developments: Vulnerability Discovery and Exploit Generation: For the first time, GTIG has identified a threat actor using a zero-day exploit that we believe was developed with AI. The criminal threat actor planned to use it in a mass exploitation event but our proactive counter discovery may…",
+      "publishedAt": "2026-05-11",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access/",
+      "source": {
+        "id": "google-threat-intelligence",
+        "name": "Google Threat Intelligence",
+        "authority": "vendor-observed"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-f6942e01c3eb0174",
+      "title": "Impact of AI on cyber threat from now to 2027",
+      "summary": "An NCSC assessment highlighting the impacts on cyber threat from AI developments between now and 2027.",
+      "publishedAt": "2025-05-07",
+      "url": "https://www.ncsc.gov.uk/report/impact-ai-cyber-threat-now-2027",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-847e52390bad64c3",
+      "title": "A method to assess 'forgivable' vs 'unforgivable' vulnerabilities",
+      "summary": "Research from the NCSC designed to eradicate vulnerability classes and make the top-level mitigations easier to implement.",
+      "publishedAt": "2025-01-28",
+      "url": "https://www.ncsc.gov.uk/report/a-method-to-assess-forgivable-vs-unforgivable-vulnerabilities",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-8ef507ff76964015",
+      "title": "The near-term impact of AI on the cyber threat",
+      "summary": "An NCSC assessment focusing on how AI will impact the efficacy of cyber operations and the implications for the cyber threat over the next two years.",
+      "publishedAt": "2024-01-24",
+      "url": "https://www.ncsc.gov.uk/report/impact-of-ai-on-cyber-threat",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-d4ad6423ca41160f",
+      "title": "ACD - The Sixth Year",
+      "summary": "Key findings and full report from the 6th year of the Active Cyber Defence (ACD) programme.",
+      "publishedAt": "2023-07-06",
+      "url": "https://www.ncsc.gov.uk/report/acd-the-sixth-year",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Defense"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-98c42ad11e875c70",
+      "title": "Cyber Threat Report: UK Legal Sector",
+      "summary": "An updated report from the NCSC explaining how UK law firms - of all sizes - can protect themselves from common cyber threats.",
+      "publishedAt": "2023-06-22",
+      "url": "https://www.ncsc.gov.uk/report/cyber-threat-report-uk-legal-sector",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Legal"
+      ],
+      "countries": [
+        "GB"
+      ]
+    },
+    {
+      "id": "osint-d0ad991822c4918f",
+      "title": "The threat from commercial cyber proliferation",
+      "summary": "Report informing readers about the threat to UK industry and society from commercial cyber tools and services.",
+      "publishedAt": "2023-04-19",
+      "url": "https://www.ncsc.gov.uk/report/commercial-cyber-proliferation-assessment",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": [
+        "GB"
+      ]
+    },
+    {
+      "id": "osint-c1c9d8bbfe7f35ce",
+      "title": "ACD - The Fifth Year",
+      "summary": "Key findings from the 5th year of the Active Cyber Defence (ACD) programme.",
+      "publishedAt": "2022-05-10",
+      "url": "https://www.ncsc.gov.uk/report/acd-the-fifth-year",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Defense"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-cf6f39aa0736f85e",
+      "title": "Organisational use of Enterprise Connected Devices",
+      "summary": "Assessing the cyber security threat to UK organisations using Enterprise Connected Devices.",
+      "publishedAt": "2022-05-10",
+      "url": "https://www.ncsc.gov.uk/report/organisational-use-of-enterprise-connected-devices",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": [
+        "GB"
+      ]
+    },
+    {
+      "id": "osint-0e739646e83f5090",
+      "title": "Threat report on application stores",
+      "summary": "This report outlines the risks associated with the use of official and third party app stores.",
+      "publishedAt": "2022-05-04",
+      "url": "https://www.ncsc.gov.uk/report/threat-report-on-application-stores",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-86314c8c88a260d8",
+      "title": "Malware analysis report on SparrowDoor malware",
+      "summary": "A technical analysis of a new variant of the SparrowDoor malware.",
+      "publishedAt": "2022-04-25",
+      "url": "https://www.ncsc.gov.uk/report/mar-sparrowdoor",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-054f43b6427ac153",
+      "title": "Vendor Security Assessment",
+      "summary": "Assessing the security of network equipment.",
+      "publishedAt": "2022-03-22",
+      "url": "https://www.ncsc.gov.uk/report/vendor-security-assessment",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-aa83d74bd3e3cf59",
+      "title": "Decrypting diversity: Diversity and inclusion in cyber security report 2021",
+      "summary": "The 2nd joint report between the NCSC and KPMG UK benchmarks against the 2020 findings to gauge what progress has been made.",
+      "publishedAt": "2021-11-23",
+      "url": "https://www.ncsc.gov.uk/report/decrypting-diversity-2021-diversity-and-inclusion-in-cyber-security",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": [
+        "GB"
+      ]
+    },
+    {
+      "id": "osint-8d63e90d19ab2465",
+      "title": "Active Cyber Defence (ACD) - the fourth year",
+      "summary": "The year four report covers 2020 and aims to highlight the achievements and efforts made by the Active Cyber Defence programme.",
+      "publishedAt": "2021-05-10",
+      "url": "https://www.ncsc.gov.uk/report/acd-report-year-four",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Defense"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-00f3608014675f54",
+      "title": "Active Cyber Defence (ACD) - The Third Year",
+      "summary": "The year three report covers 2019 and aims to highlight the achievements and efforts made by the Active Cyber Defence programme.",
+      "publishedAt": "2021-02-19",
+      "url": "https://www.ncsc.gov.uk/report/acd-report-year-three",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [
+        "Defense"
+      ],
+      "countries": []
+    },
+    {
+      "id": "osint-cf8c06f0d5264a81",
+      "title": "Technical report: Responsible use of the Border Gateway Protocol (BGP) for ISP interworking",
+      "summary": "Technical report on best practice use of this fundamental data routing protocol.",
+      "publishedAt": "2021-01-20",
+      "url": "https://www.ncsc.gov.uk/report/responsible-use-of-bgp-for-isp-interworking",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-0ae1c058e1c96bc8",
+      "title": "Decrypting diversity: Diversity and inclusion in cyber security report 2020",
+      "summary": "Joint report between the NCSC and KPMG UK is the first in a series to benchmark and track levels of diversity and inclusion in the cyber security industry.",
+      "publishedAt": "2020-07-28",
+      "url": "https://www.ncsc.gov.uk/report/diversity-and-inclusion-in-cyber-security-report",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": [
+        "GB"
+      ]
+    },
+    {
+      "id": "osint-67a47897c504a3fe",
+      "title": "The cyber threat to sports organisations",
+      "summary": "The NCSC report highlights the cyber threats faced by the sports sector and suggests how to stop or lessen their impact on organisations.",
+      "publishedAt": "2020-07-23",
+      "url": "https://www.ncsc.gov.uk/report/the-cyber-threat-to-sports-organisations",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-06b7331453024270",
+      "title": "Summary of the NCSC analysis of May 2020 US sanction",
+      "summary": "A summary of the NCSC’s analysis of the May 2020 US sanction which caused the NCSC to modify the scope of its security mitigation strategy for Huawei.",
+      "publishedAt": "2020-07-14",
+      "url": "https://www.ncsc.gov.uk/report/summary-of-ncsc-analysis-of-us-may-2020-sanction",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-90f98b9a3444a26b",
+      "title": "High level privacy and security design for NHS COVID-19 contact tracing app",
+      "summary": "NCSC technical paper about the privacy and security design of the NHS contact tracing app developed to help slow the spread of coronavirus.",
+      "publishedAt": "2020-05-04",
+      "url": "https://www.ncsc.gov.uk/report/nhs-covid-19-app-privacy-security-report",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": []
+    },
+    {
+      "id": "osint-2e99ecc2805a26fc",
+      "title": "Summary of NCSC’s security analysis for the UK telecoms sector",
+      "summary": "A summary of the NCSC’s security analysis for the UK telecoms sector",
+      "publishedAt": "2020-01-28",
+      "url": "https://www.ncsc.gov.uk/report/summary-of-ncsc-security-analysis-for-the-uk-telecoms-sector",
+      "source": {
+        "id": "ncsc-uk",
+        "name": "UK NCSC Threat Reports",
+        "authority": "government"
+      },
+      "activityType": "security-advisory",
+      "entities": [],
+      "actorIds": [],
+      "sectors": [],
+      "countries": [
+        "GB"
+      ]
+    }
+  ]
+}

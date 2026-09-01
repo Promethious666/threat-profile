@@ -80,16 +80,17 @@ test("onboarding and local report export are present and privacy-labelled", () =
   assert.equal([...html.matchAll(/<li><span>[123]<\/span><div><strong>/g)].length, 3);
   assert.match(html, /id="print-report-output"/);
   assert.match(html, /id="report-content"/);
-  assert.match(html, /includes any organisation and technology text entered/i);
+  assert.match(html, /includes any organisation, technology and watchlist text entered/i);
   assert.match(app, /window\.print\(\)/);
   assert.match(app, /window\.addEventListener\("beforeprint"/);
   assert.match(app, /Possible text match|possible text match/i);
   assert.match(css, /#results > :not\(\.print-report\)/);
   assert.match(css, /@page/);
-  assert.match(html, /PDF and complete JSON exports[\s\S]*Navigator exports exclude both fields/i);
+  assert.match(html, /PDF and complete JSON exports[\s\S]*Share links and Navigator exports exclude all three fields/i);
   assert.match(app, /navigatorLayer\(publicProfileName\(\)/);
   assert.match(app, /containsOrganisationContext/);
   assert.match(app, /containsTechnologyContext/);
+  assert.match(app, /containsWatchlistContext/);
 });
 
 test("approved evidence-window and analysis-focus controls drive share and export scope", () => {
@@ -104,7 +105,9 @@ test("approved evidence-window and analysis-focus controls drive share and expor
   assert.match(app, /aggregateTechniques\(state\.focusActors/);
   assert.match(app, /aggregateSoftware\(state\.focusActors/);
   assert.match(app, /relevantCampaigns\(state\.intelligence\.campaigns, state\.focusActors/);
-  assert.match(app, /currentSignals:[\s\S]*allProfileMatches/);
+  assert.match(app, /currentReporting:[\s\S]*allProfileMatches/);
+  assert.match(app, /matchCurrentReports\(state\.currentReportData\.reports/);
+  assert.doesNotMatch(app, /current-threat-signals/);
 });
 
 test("all local entry assets exist", async () => {

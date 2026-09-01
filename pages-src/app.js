@@ -6,8 +6,10 @@ import {
   attackTechniqueUrl,
   classifyCampaignsByWindow,
   classifyKevsByWindow,
-  classifySignalsByWindow,
+  classifyReportsByWindow,
   filterVulnerabilities,
+  groupCurrentEntities,
+  matchCurrentReports,
   navigatorLayer,
   normalizeEvidenceWindowPreset,
   normalizeTopFocus,
@@ -23,6 +25,7 @@ const elements = {
   sector: document.querySelector("#sector"),
   country: document.querySelector("#country"),
   technology: document.querySelector("#technology"),
+  watchlist: document.querySelector("#watchlist"),
   evidenceWindow: document.querySelector("#evidence-window"),
   focusCount: document.querySelector("#focus-count"),
   analyseButton: document.querySelector("#analyse-button"),
@@ -53,14 +56,14 @@ const elements = {
   judgementGrid: document.querySelector("#judgement-grid"),
   priorityActions: document.querySelector("#priority-actions"),
   overviewScope: document.querySelector("#overview-scope"),
-  overviewSignals: document.querySelector("#overview-signals"),
+  overviewReports: document.querySelector("#overview-reports"),
   overviewActors: document.querySelector("#overview-actors"),
   overviewTechniques: document.querySelector("#overview-techniques"),
   overviewCampaigns: document.querySelector("#overview-campaigns"),
   overviewExposure: document.querySelector("#overview-exposure"),
   overviewGaps: document.querySelector("#overview-gaps"),
-  currentSignalCount: document.querySelector("#current-signal-count"),
-  currentSignalList: document.querySelector("#current-signal-list"),
+  currentReportCount: document.querySelector("#current-report-count"),
+  currentReportList: document.querySelector("#current-report-list"),
   actorSearch: document.querySelector("#actor-search"),
   actorBandFilter: document.querySelector("#actor-band-filter"),
   clearActorFilters: document.querySelector("#clear-actor-filters"),
@@ -93,7 +96,7 @@ const elements = {
 
 const state = {
   intelligence: null,
-  currentSignalData: null,
+  currentReportData: null,
   profile: null,
   rankedActors: [],
   focusSelection: null,
@@ -104,8 +107,9 @@ const state = {
   campaignEvidence: null,
   vulnerabilities: [],
   kevEvidence: null,
-  currentSignals: [],
-  signalEvidence: null,
+  currentReports: [],
+  reportEvidence: null,
+  currentEntities: [],
   activeView: "overview",
   selectedActorId: null,
   selectedTechniqueId: null,
@@ -221,6 +225,11 @@ function humanise(value) {
   return String(value || "Unknown").replaceAll("-", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function summarise(value, maximum) {
+  const text = String(value || "").trim();
+  return text.length > maximum ? `${text.slice(0, maximum - 1).trimEnd()}…` : text;
+}
+
 function showFeedback(message) {
   clearTimeout(feedbackTimer);
   elements.feedback.textContent = message;
@@ -323,6 +332,7 @@ function readProfileFromUrl() {
 
   elements.organisation.value = "";
   elements.technology.value = "";
+  elements.watchlist.value = "";
   elements.sector.value = sector;
   elements.country.value = country;
   elements.evidenceWindow.value = normalizeEvidenceWindowPreset(params.get("window") || params.get("lookback"));
@@ -334,8 +344,13 @@ function readProfileFromUrl() {
 }
 
 function renderHealth() {
-  const health = state.intelligence.health || [];
-  const unknown = health.length !== 3;
+  const reportHealth = (state.currentReportData?.sources || []).map((source) => ({
+    ...source,
+    sourceUrl: source.homepage || source.url,
+    sourceVersion: "Dated public reporting",
+  }));
+  const health = [...(state.intelligence.health || []), ...reportHealth];
+  const unknown = health.length < 7;
   const stale = health.some((source) => source.status !== "current");
   const status = unknown ? "unknown" : stale ? "stale" : "current";
   elements.healthDot.className = `status-dot ${status}`;
@@ -370,7 +385,7 @@ function renderHealth() {
     [coverage.actorsWithProfileData ?? "—", "Actors with profile context"],
     [state.intelligence.techniques.length, "ATT&CK techniques"],
     [state.intelligence.vulnerabilities.length, "CISA KEV entries"],
-    [state.currentSignalData?.signals?.length ?? 0, "Curated dated signals"],
+    [state.currentReportData?.reports?.length ?? 0, "Automated public reports"],
   ].map(([value, label]) => `
     <article class="coverage-card"><strong>${escapeHtml(value)}</strong><span>${escapeHtml(label)}</span></article>
   `).join("");
@@ -380,68 +395,62 @@ function fitBadge(actor) {
   return `<span class="badge ${fitBandClass(actor.fitBand)}">${escapeHtml(actor.fitBand)}</span>`;
 }
 
-function signalMatchLabel(signal) {
-  if (signal.sectorMatch && signal.countryMatch) return "Sector + country (independent claims)";
-  if (signal.sectorMatch) return "Sector context";
-  if (signal.countryMatch) return "Country context";
-  return "No profile match";
-}
-
-function signalEntityLabel(signal) {
-  return signal.entityType === "ransomware-family" ? "Ransomware family" : "Threat actor group";
-}
-
-function signalEvidenceLabel(signal) {
+function reportAuthorityLabel(report) {
   return {
-    "vendor-observed": "Vendor-observed reporting",
-    "law-enforcement-assessed": "Law-enforcement assessment",
-    "government-warning": "Government warning",
-    "authoritative-catalogue": "Authoritative catalogue",
-  }[signal.evidenceTier] || humanise(signal.evidenceTier);
+    government: "Government reporting",
+    "vendor-observed": "Vendor threat research",
+  }[report.source?.authority] || "Public reporting";
 }
 
-function signalIntersectionLabel(signal) {
-  if (signal.intersectionStatus === "confirmed") return "Sector-country intersection confirmed";
-  if (signal.intersectionStatus === "not-established") return "Sector-country intersection not established";
-  return "Single-dimension source claim";
+function reportTypeLabel(report) {
+  return {
+    "campaign-report": "Campaign reporting",
+    "actor-report": "Actor reporting",
+    "malware-report": "Malware reporting",
+    "security-advisory": "Security advisory",
+  }[report.activityType] || "Public report";
 }
 
-function renderCurrentSignals() {
+function reportEntityNames(report) {
+  return (report.entities || []).map((entity) => entity.name);
+}
+
+function reportEvidenceClass(report) {
+  return report.evidenceClass === "direct-mention" || report.evidenceClass === "observed-context"
+    ? "reviewed"
+    : report.evidenceClass === "watchlist-mention" ? "warning" : "material";
+}
+
+function renderCurrentReports() {
   const label = evidenceWindowLabel();
-  const total = state.signalEvidence?.all.length || 0;
-  const excluded = state.signalEvidence?.excluded.length || 0;
-  const summaries = state.currentSignals.slice(0, 3);
-  elements.currentSignalCount.textContent = `${state.currentSignals.length} inside ${label}; ${excluded} older, undated or otherwise excluded. Curated layer reviewed ${formatDate(state.currentSignalData.reviewedAt)}.`;
+  const total = state.reportEvidence?.all.length || 0;
+  const excluded = state.reportEvidence?.excluded.length || 0;
+  const summaries = state.currentReports.slice(0, 3);
+  elements.currentReportCount.textContent = `${state.currentReports.length} matched report${state.currentReports.length === 1 ? "" : "s"} inside ${label}; ${excluded} matched report${excluded === 1 ? "" : "s"} outside the dated view. ${state.currentReportData.sources.length} feeds refresh automatically.`;
 
-  elements.overviewSignals.innerHTML = summaries.length ? summaries.map((signal) => `
+  elements.overviewReports.innerHTML = summaries.length ? summaries.map((report) => `
     <article class="signal-summary-item">
-      <header><span class="badge current">${escapeHtml(signalEntityLabel(signal))}</span><span class="badge">${escapeHtml(formatDate(signal.publishedAt))}</span></header>
-      <h4>${escapeHtml(signal.entityName)}</h4>
-      <p>${escapeHtml(signal.summary)}</p>
-      <a href="#actors" data-view-link="actors">${escapeHtml(signalMatchLabel(signal))}</a>
+      <header><span class="badge ${reportEvidenceClass(report)}">${escapeHtml(report.evidenceLabel)}</span><span class="badge">${escapeHtml(formatDate(report.publishedAt))}</span></header>
+      <h4>${escapeHtml(report.title)}</h4>
+      <p>${escapeHtml(summarise(report.summary, 240) || "Open the source for full reporting and defensive guidance.")}</p>
+      <a href="#activity" data-view-link="activity">${escapeHtml(report.source?.name || "Open evidence")}</a>
     </article>
-  `).join("") : `<div class="empty-state">No matching source publication falls inside ${escapeHtml(label)}. This is not evidence that no threat exists; ${excluded || total} matched records remain outside the selected dated window.</div>`;
+  `).join("") : `<div class="empty-state">No credible report match falls inside ${escapeHtml(label)}. This means the automated feeds found no source text meeting the profile rules; it is not evidence that no threat exists. ${excluded || total} matched reports remain outside the selected window.</div>`;
 
-  elements.currentSignalList.innerHTML = state.currentSignals.length ? state.currentSignals.map((signal) => `
+  elements.currentReportList.innerHTML = state.currentReports.length ? state.currentReports.map((report) => `
     <article class="signal-card">
       <header>
-        <div class="tag-row"><span class="badge current">${escapeHtml(signalEntityLabel(signal))}</span><span class="badge material">${escapeHtml(signalEvidenceLabel(signal))}</span></div>
-        <span class="badge">${escapeHtml(signalMatchLabel(signal))}</span>
+        <div class="tag-row"><span class="badge current">${escapeHtml(reportTypeLabel(report))}</span><span class="badge">${escapeHtml(reportAuthorityLabel(report))}</span></div>
+        <span class="badge ${reportEvidenceClass(report)}">${escapeHtml(report.evidenceLabel)}</span>
       </header>
-      <h4>${escapeHtml(signal.entityName)} · ${escapeHtml(signal.entityId)}</h4>
-      <p>${escapeHtml(signal.summary)}</p>
-      <div class="tag-row"><span class="badge ${signal.intersectionStatus === "confirmed" ? "reviewed" : "warning"}">${escapeHtml(signalIntersectionLabel(signal))}</span><span class="badge">${escapeHtml(humanise(signal.status))}</span></div>
-      <details><summary>Claims and caveats</summary>
-        <ul class="plain-list">
-          ${(signal.sectorClaims || []).map((claim) => `<li><strong>${escapeHtml(claim.sector)}:</strong> ${escapeHtml(claim.claim)}</li>`).join("")}
-          ${(signal.countryClaims || []).map((claim) => `<li><strong>${escapeHtml(claim.country)}:</strong> ${escapeHtml(claim.claim)}</li>`).join("")}
-          ${(signal.caveats || []).map((caveat) => `<li>${escapeHtml(caveat)}</li>`).join("")}
-        </ul>
-      </details>
-      <footer><span>Source published: ${escapeHtml(formatDate(signal.publishedAt))}</span><span>Publication date is evidence recency, not an activity date.</span></footer>
-      <div class="link-row">${externalLink(signal.source?.url, `Open ${signal.source?.name || "source"}`)}${externalLink(signal.entityReference, "Open ATT&CK entity")}</div>
+      <h4>${escapeHtml(report.title)}</h4>
+      <p>${escapeHtml(summarise(report.summary, 420) || "Open the source for the complete report.")}</p>
+      ${reportEntityNames(report).length ? `<div class="tag-row">${reportEntityNames(report).map((name) => `<span class="badge">${escapeHtml(name)}</span>`).join("")}</div>` : ""}
+      <p class="muted"><strong>Why included:</strong> ${escapeHtml(report.explanation)}</p>
+      <footer><span>Published: ${escapeHtml(formatDate(report.publishedAt))}</span><span>Source: ${escapeHtml(report.source?.name || "Unknown")}</span></footer>
+      <div class="link-row">${externalLink(report.url, "Open original report")}</div>
     </article>
-  `).join("") : `<div class="empty-state">No matched dated signal is inside ${escapeHtml(label)}. ${excluded ? `${excluded} matched record${excluded === 1 ? " is" : "s are"} retained as excluded evidence in the complete JSON export.` : "The curated signal layer has no matching record for this profile."}</div>`;
+  `).join("") : `<div class="empty-state">No automatically collected report meets this profile inside ${escapeHtml(label)}. Try a wider window, add an organisation or watchlist term, or inspect historical actor context.</div>`;
 }
 
 function renderJudgements() {
@@ -452,20 +461,31 @@ function renderJudgements() {
   const detectionTechnique = operational.find((technique) => detectionsForTechnique(technique.id).length);
   const hasTechnology = Boolean(state.profile.technology.trim());
   const windowLabel = evidenceWindowLabel();
+  const leadingReport = state.currentReports[0];
+  const leadingEntity = state.currentEntities[0];
 
   const judgements = [
     {
-      kind: "Actor landscape",
-      badge: "Historical public-source fit",
-      badgeClass: "warning",
-      title: leaders.length > 1
-        ? `${leaders.length} co-leading profile matches`
-        : leaders[0] ? `${leaders[0].name} is the leading profile match` : "No actor match found",
-      body: leaders.length
-        ? `The leading fit is ${leaders[0].profileFit}/100. Sector and country are independent historical attributes, not a joint targeting event.`
-        : "No actor in the current targeting source matches this context.",
-      foot: `${state.focusSelection.actualCount} in ${focusLabel()} · ${state.rankedActors.length} total candidates`,
-      view: "actors",
+      kind: "Recent reporting",
+      badge: leadingReport ? leadingReport.evidenceLabel : "No dated match",
+      badgeClass: leadingReport ? reportEvidenceClass(leadingReport) : "historical",
+      title: leadingReport ? leadingReport.title : `No matched report inside ${windowLabel}`,
+      body: leadingReport
+        ? leadingReport.explanation
+        : "The automated feeds found no report meeting the selected profile rules. This is not evidence that no threat exists.",
+      foot: `${state.currentReports.length} matched report${state.currentReports.length === 1 ? "" : "s"} · ${state.reportEvidence?.excluded.length || 0} outside the window`,
+      view: "activity",
+    },
+    {
+      kind: "Named entities",
+      badge: leadingEntity ? "Source-observed" : "None identified",
+      badgeClass: leadingEntity ? "material" : "historical",
+      title: leadingEntity ? leadingEntity.name : "No named actor or malware identified",
+      body: leadingEntity
+        ? `${leadingEntity.reportCount} matching report${leadingEntity.reportCount === 1 ? "" : "s"} across ${leadingEntity.sourceNames.length} source${leadingEntity.sourceNames.length === 1 ? "" : "s"}. Open the reports to assess the relationship.`
+        : "Current reporting can still be relevant without naming a tracked threat actor or malware family.",
+      foot: `${state.currentEntities.length} named entit${state.currentEntities.length === 1 ? "y" : "ies"} in the current result`,
+      view: "activity",
     },
     {
       kind: "Defensive behaviour",
@@ -479,15 +499,6 @@ function renderJudgements() {
         : "Technique coverage is available, but reviewed Microsoft KQL is not yet mapped to the leading behaviour.",
       foot: `${operational.length} operational techniques`,
       view: "techniques",
-    },
-    {
-      kind: "Campaign context",
-      badge: state.currentSignals.length ? "Dated source context" : "No dated match in window",
-      badgeClass: state.currentSignals.length ? "material" : "historical",
-      title: `${state.currentSignals.length} current signal${state.currentSignals.length === 1 ? "" : "s"} · ${state.campaigns.length} ATT&CK campaign${state.campaigns.length === 1 ? "" : "s"}`,
-      body: `Inside ${windowLabel}. Publication and last-seen dates provide recency context; neither proves present activity or direct targeting.`,
-      foot: `${state.signalEvidence?.excluded.length || 0} signals · ${state.campaignEvidence?.excluded.length || 0} campaigns outside dated scope`,
-      view: "actors",
     },
     {
       kind: "Exposure position",
@@ -524,19 +535,19 @@ function renderJudgements() {
   const firstActor = state.focusActors[0];
   const actions = [
     {
-      title: "Review the leading actor evidence",
-      detail: firstActor ? `Validate ${firstActor.name} and the other co-leading matches before assigning internal priority.` : "Broaden or change the profile context.",
-      view: "actors",
+      title: leadingReport ? "Review the highest-relevance report" : "Broaden the profile or evidence window",
+      detail: leadingReport ? `Open the original ${leadingReport.source?.name || "source"} report and verify what was observed, when and against whom.` : "Try a longer date window, organisation aliases, technologies or watchlist terms.",
+      view: "activity",
     },
     {
-      title: detectionTechnique ? `Run a bounded ${detectionTechnique.id} hunt` : "Map leading techniques to available telemetry",
-      detail: detectionTechnique ? "Check prerequisites, run with the documented lookback, review false positives and tune before promotion." : "Start with operational techniques and confirm Microsoft data availability.",
-      view: "techniques",
+      title: leadingEntity ? `Validate ${leadingEntity.name}` : "Review the historical actor context",
+      detail: leadingEntity ? "Compare aliases and source claims before treating the entity as relevant to the organisation." : firstActor ? `Use ${firstActor.name} as background context, not a current targeting claim.` : "Broaden or change the profile context.",
+      view: leadingEntity ? "activity" : "actors",
     },
     {
-      title: hasTechnology ? "Confirm KEV matches against asset evidence" : "Add technology or inventory context",
-      detail: hasTechnology ? "Verify product, version, asset criticality and internet exposure before remediation prioritisation." : "Keep the global KEV list separate from environment-relevant exposure decisions.",
-      view: "vulnerabilities",
+      title: detectionTechnique ? `Run a bounded ${detectionTechnique.id} hunt` : hasTechnology ? "Confirm KEV matches against asset evidence" : "Add technology context",
+      detail: detectionTechnique ? "Check prerequisites, run with the documented lookback, review false positives and tune locally." : hasTechnology ? "Verify product, version and asset presence before prioritising remediation." : "Technology terms improve report matching and exposure triage.",
+      view: detectionTechnique ? "techniques" : "vulnerabilities",
     },
   ];
   elements.priorityActions.innerHTML = actions.map((action) => `
@@ -550,8 +561,8 @@ function renderOverview() {
   const hasTechnology = Boolean(state.profile.technology.trim());
   const windowLabel = evidenceWindowLabel();
 
-  elements.overviewScope.textContent = `${focusLabel()} · ${windowLabel} dated evidence · ${state.rankedActors.length} total actor matches`;
-  renderCurrentSignals();
+  elements.overviewScope.textContent = `${state.currentReports.length} matched public reports · ${focusLabel()} historical context · ${windowLabel}`;
+  renderCurrentReports();
   elements.overviewActors.innerHTML = actors.length ? actors.map((actor) => `
     <div class="compact-item"><div><strong>${escapeHtml(actor.name)}</strong><span>#${actor.competitionRank} · ${escapeHtml(actor.fitBand)} · ${escapeHtml(actor.matchDimensions.join(" + "))}</span></div><b>${actor.profileFit}</b></div>
   `).join("") : '<div class="empty-state">No actor candidates match the selected context.</div>';
@@ -559,8 +570,8 @@ function renderOverview() {
     <div class="compact-item"><div><strong>${escapeHtml(technique.id)} · ${escapeHtml(technique.name)}</strong><span>${technique.actorCount} actors · ${detectionsForTechnique(technique.id).length ? "Reviewed KQL" : "No reviewed KQL"}</span></div><b>${technique.techniqueScore}</b></div>
   `).join("") : '<div class="empty-state">No operational techniques are mapped.</div>';
   elements.overviewCampaigns.innerHTML = `
-    <div class="compact-item"><div><strong>${state.campaigns.length} inside ${escapeHtml(windowLabel)}</strong><span>${state.campaignEvidence.excluded.length} older, undated, invalid or future-dated records retained</span></div><b>${state.campaigns.length}</b></div>
-    <p class="muted">ATT&amp;CK campaign dates are shown only from <code>last_seen</code>; catalogue modification dates are not treated as activity.</p>
+    <div class="compact-item"><div><strong>${state.currentReports.filter((report) => report.activityType === "campaign-report").length} named campaign report${state.currentReports.filter((report) => report.activityType === "campaign-report").length === 1 ? "" : "s"}</strong><span>${state.campaigns.length} linked ATT&amp;CK campaigns remain available as historical context</span></div><b>${state.currentReports.filter((report) => report.activityType === "campaign-report").length}</b></div>
+    <p class="muted">A report is labelled as campaign reporting only when its own source text describes a campaign or named operation.</p>
   `;
   elements.overviewExposure.innerHTML = `
     <div class="compact-item"><div><strong>${hasTechnology ? "Possible keyword matches" : "Exposure unknown"}</strong><span>${hasTechnology ? escapeHtml(state.profile.technology) : "No technology context supplied"}</span></div><b>${hasTechnology ? state.vulnerabilities.length : "—"}</b></div>
@@ -568,7 +579,7 @@ function renderOverview() {
   `;
   elements.overviewGaps.innerHTML = [
     "Actor rankings are based on historical public reporting and should be validated against current intelligence before operational use.",
-    "Current-signal publication dates show when evidence was published, not necessarily when activity occurred.",
+    "Report publication dates show when evidence was published, not necessarily when the activity occurred.",
     "Infrastructure, domains, IP addresses, hashes and host/network artefacts are not collected.",
     hasTechnology ? "Technology matching is text-based and does not include product versions or asset exposure." : "No technology or asset context is available for KEV relevance.",
     "Microsoft KQL is schema reviewed but has not been validated against this organisation's tenant or baselines.",
@@ -837,15 +848,15 @@ function renderModels() {
 
 function renderProfileHeader() {
   elements.profileMode.textContent = state.exampleProfile ? "Example context" : "Current context";
-  elements.scopeBadge.textContent = state.profile.organisation ? "Organisation name is context only" : "Profile relevance inference";
+  elements.scopeBadge.textContent = state.profile.organisation ? "Organisation terms matched locally" : "OSINT profile relevance";
   elements.windowBadge.textContent = `Evidence: ${evidenceWindowLabel()}`;
   elements.focusBadge.textContent = `Focus: ${focusLabel()}`;
   elements.profileTitle.textContent = profileName();
   elements.profileDate.textContent = `Built from source snapshots ${formatDate(state.intelligence.generatedAt, true)}`;
   const basis = state.profile.organisation
-    ? `${state.profile.sector} + ${displayRegion(state.profile.country)}. The organisation name does not create or imply direct targeting evidence.`
-    : `${state.profile.sector} + ${displayRegion(state.profile.country)}. Sector and country are matched as independent historical attributes.`;
-  elements.profileBasis.textContent = `${basis} ${focusLabel()} drives downstream priorities; ${evidenceWindowLabel()} applies only to genuinely dated evidence.`;
+    ? `${state.profile.sector} + ${displayRegion(state.profile.country)} with private organisation terms. A report mention does not prove compromise or deliberate targeting.`
+    : `${state.profile.sector} + ${displayRegion(state.profile.country)}. Current reports require sector relevance; country-only mentions are excluded.`;
+  elements.profileBasis.textContent = `${basis} ${focusLabel()} supplies historical background; ${evidenceWindowLabel()} applies only to genuinely dated evidence.`;
 }
 
 function renderPrintReport() {
@@ -854,7 +865,7 @@ function renderPrintReport() {
   const operationalTechniques = state.techniques.filter((technique) => technique.operational);
   const reportTechniques = operationalTechniques.slice(0, 10);
   const reportActors = state.focusActors;
-  const reportSignals = state.currentSignals.slice(0, 8);
+  const reportReports = state.currentReports.slice(0, 8);
   const reportCampaigns = state.campaigns.slice(0, 6);
   const reportVulnerabilities = state.vulnerabilities.slice(0, 10);
   const hunts = [];
@@ -891,26 +902,26 @@ function renderPrintReport() {
       <div class="report-summary-grid">
         <article><strong>Actor landscape</strong><p>${escapeHtml(leaderSummary)} Profile fit is relevance, not likelihood; validate it against current intelligence before operational use.</p></article>
         <article><strong>Defensive behaviour</strong><p>${reportTechniques.length ? `${reportTechniques.length} leading operational techniques are included below; ${hunts.length} have mapped Microsoft-schema-reviewed hunting starters in this report.` : "No operational ATT&CK techniques are available for this context."}</p></article>
-        <article><strong>Dated threat context</strong><p>${state.currentSignals.length} curated signal publications and ${state.campaigns.length} linked ATT&amp;CK campaigns fall inside ${escapeHtml(evidenceWindowLabel())}. Dates provide evidence recency, not proof of current activity.</p></article>
+        <article><strong>Recent reporting</strong><p>${state.currentReports.length} automatically collected public reports match the profile inside ${escapeHtml(evidenceWindowLabel())}; ${state.currentEntities.length} named actors or malware families were identified. Publication dates provide recency context, not proof of current activity.</p></article>
         <article><strong>Exposure context</strong><p>${escapeHtml(exposureSummary)}</p></article>
       </div>
     </section>
 
     <section class="report-section report-context">
       <h2>Assessment context</h2>
-      <dl><dt>Organisation</dt><dd>${escapeHtml(state.profile.organisation || "Not supplied")}${state.profile.organisation ? " — display context only" : ""}</dd><dt>Sector</dt><dd>${escapeHtml(state.profile.sector)}</dd><dt>Country</dt><dd>${escapeHtml(displayRegion(state.profile.country))}</dd><dt>Technology context</dt><dd>${escapeHtml(technologyContext)}</dd><dt>Analysis focus</dt><dd>${escapeHtml(focusLabel())} (${state.focusSelection.actualCount} actors included)</dd><dt>Dated evidence window</dt><dd>${escapeHtml(evidenceWindowLabel())} · ${state.campaignEvidence.window.cutoff ? `cutoff ${escapeHtml(formatDate(state.campaignEvidence.window.cutoff))}` : "no lower date limit"} · as of ${escapeHtml(formatDate(state.campaignEvidence.window.asOf))}</dd></dl>
+      <dl><dt>Organisation / brands</dt><dd>${escapeHtml(state.profile.organisation || "Not supplied")}${state.profile.organisation ? " — matched privately in this browser" : ""}</dd><dt>Sector</dt><dd>${escapeHtml(state.profile.sector)}</dd><dt>Country</dt><dd>${escapeHtml(displayRegion(state.profile.country))}</dd><dt>Technology context</dt><dd>${escapeHtml(technologyContext)}</dd><dt>Actor watchlist</dt><dd>${escapeHtml(state.profile.watchlist || "Not supplied")}</dd><dt>Analysis focus</dt><dd>${escapeHtml(focusLabel())} (${state.focusSelection.actualCount} historical actors included)</dd><dt>Dated evidence window</dt><dd>${escapeHtml(evidenceWindowLabel())} · ${state.campaignEvidence.window.cutoff ? `cutoff ${escapeHtml(formatDate(state.campaignEvidence.window.cutoff))}` : "no lower date limit"} · as of ${escapeHtml(formatDate(state.campaignEvidence.window.asOf))}</dd></dl>
     </section>
 
     <section class="report-section">
-      <h2>Current threat signals</h2>
-      ${reportSignals.length ? `<table><thead><tr><th>Entity</th><th>Type</th><th>Profile match</th><th>Source published</th><th>Evidence</th></tr></thead><tbody>${reportSignals.map((signal) => `<tr><td>${escapeHtml(signal.entityName)}<br><small>${escapeHtml(signal.entityId)}</small></td><td>${escapeHtml(signalEntityLabel(signal))}</td><td>${escapeHtml(signalMatchLabel(signal))}</td><td>${escapeHtml(formatDate(signal.publishedAt))}</td><td>${escapeHtml(signalEvidenceLabel(signal))}</td></tr>`).join("")}</tbody></table>` : `<p>No matching signal publication falls inside ${escapeHtml(evidenceWindowLabel())}.</p>`}
-      <p class="report-note">Signal publication dates show when supporting evidence was published, not necessarily when activity occurred. Sector and country claims remain independent unless a source confirms their intersection. Qilin is represented as a ransomware family, not a threat actor.</p>
+      <h2>Matched public reporting</h2>
+      ${reportReports.length ? `<table><thead><tr><th>Report</th><th>Source</th><th>Published</th><th>Why included</th></tr></thead><tbody>${reportReports.map((report) => `<tr><td>${escapeHtml(report.title)}${reportEntityNames(report).length ? `<br><small>${escapeHtml(reportEntityNames(report).join(", "))}</small>` : ""}</td><td>${escapeHtml(report.source?.name || "Unknown")}</td><td>${escapeHtml(formatDate(report.publishedAt))}</td><td>${escapeHtml(report.evidenceLabel)} — ${escapeHtml(report.explanation)}</td></tr>`).join("")}</tbody></table>` : `<p>No automatically collected report meets this profile inside ${escapeHtml(evidenceWindowLabel())}.</p>`}
+      <p class="report-note">Reports are matched from their own title and summary. Country-only mentions never create sector relevance. A name mention is not proof of compromise, deliberate targeting or attribution.</p>
     </section>
 
     <section class="report-section">
       <h2>Priority actions</h2>
       <ol>
-        <li><strong>Validate the leading actor evidence.</strong> Review the retained targeting references and ATT&amp;CK relationships before using the profile in an intelligence judgement.</li>
+        <li><strong>Review the original current reports.</strong> Confirm what was observed, when it occurred and whether the affected victims resemble the organisation.</li>
         <li><strong>Run a bounded hunt.</strong> Confirm prerequisites, use the documented lookback, review false positives and tune locally before promotion.</li>
         <li><strong>Confirm exposure with asset evidence.</strong> Treat KEV keyword matches as triage leads until product presence, affected versions and remediation state are verified.</li>
         <li><strong>Record the evidence gaps.</strong> This source set does not collect infrastructure, indicators or organisation-specific victim observations.</li>
@@ -950,9 +961,8 @@ function renderPrintReport() {
 
     <section class="report-section">
       <h2>Sources and evidence boundaries</h2>
-      <div class="report-sources">${(state.intelligence.health || []).map((source) => `<article><strong>${escapeHtml(source.name)}</strong><p>Status: ${escapeHtml(source.status)} · Records: ${escapeHtml(source.recordCount ?? "Unknown")} · Version: ${escapeHtml(source.sourceVersion || "Not supplied")} · Last success: ${escapeHtml(formatDate(source.lastSuccessfulRefresh, true))}</p>${externalLink(source.sourceUrl, safeUrl(source.sourceUrl))}</article>`).join("")}</div>
-      <div class="report-sources"><article><strong>Curated current threat signals</strong><p>${state.currentSignalData.signals.length} provenance-reviewed records · reviewed ${escapeHtml(formatDate(state.currentSignalData.reviewedAt))}. Individual source links are retained in the JSON export and interactive evidence cards.</p></article></div>
-      <ul><li>Profile fit is not attack probability, attribution confidence or evidence of current activity.</li><li>Actor rankings use historical public reporting and require validation against current intelligence before operational use.</li><li>The time picker filters only dated publications, ATT&amp;CK <code>last_seen</code> and CISA <code>dateAdded</code>; it does not date undated actor relationships.</li><li>Infrastructure, domains, IP addresses, hashes and host/network artefacts are not collected.</li><li>KQL is schema reviewed against Microsoft Learn but requires tenant validation.</li></ul>
+      <div class="report-sources">${[...(state.intelligence.health || []), ...(state.currentReportData.sources || []).map((source) => ({ ...source, sourceUrl: source.homepage || source.url, sourceVersion: "Dated public reporting" }))].map((source) => `<article><strong>${escapeHtml(source.name)}</strong><p>Status: ${escapeHtml(source.status)} · Records: ${escapeHtml(source.recordCount ?? "Unknown")} · Version: ${escapeHtml(source.sourceVersion || "Not supplied")} · Last success: ${escapeHtml(formatDate(source.lastSuccessfulRefresh, true))}</p>${externalLink(source.sourceUrl, safeUrl(source.sourceUrl))}</article>`).join("")}</div>
+      <ul><li>Current reports are automated triage leads; profile relevance is not attack probability or proof of targeting.</li><li>Actor rankings use historical public reporting and require validation against current reporting before operational use.</li><li>The time picker filters report <code>publishedAt</code>, ATT&amp;CK <code>last_seen</code> and CISA <code>dateAdded</code>; it does not date undated actor relationships.</li><li>Infrastructure, domains, IP addresses, hashes and host/network artefacts are not collected.</li><li>KQL is schema reviewed against Microsoft Learn but requires tenant validation.</li></ul>
     </section>
 
     <footer class="report-footer"><p>Report generated from validated public source snapshots. Complete ranked data and methodology metadata remain available in the JSON export.</p></footer>
@@ -982,20 +992,6 @@ function renderAll() {
   setView(state.activeView, { updateHistory: false, scroll: false });
 }
 
-function matchCurrentSignals(signals, sector, country) {
-  return (signals || []).map((signal) => {
-    const sectorMatch = (signal.sectorClaims || []).some((claim) => claim.sector === sector);
-    const countryMatch = (signal.countryClaims || []).some((claim) => claim.countryCode === country);
-    if (!sectorMatch && !countryMatch) return null;
-    return {
-      ...signal,
-      sectorMatch,
-      countryMatch,
-      matchDimensions: [sectorMatch ? "sector" : null, countryMatch ? "country" : null].filter(Boolean),
-    };
-  }).filter(Boolean);
-}
-
 function buildProfile({ announceResult = false, pushHistory = false } = {}) {
   const sector = elements.sector.value;
   const country = elements.country.value;
@@ -1011,6 +1007,7 @@ function buildProfile({ announceResult = false, pushHistory = false } = {}) {
     sector,
     country,
     technology: elements.technology.value.trim(),
+    watchlist: elements.watchlist.value.trim(),
     evidenceWindow,
     focusCount,
   };
@@ -1031,10 +1028,10 @@ function buildProfile({ announceResult = false, pushHistory = false } = {}) {
   state.kevEvidence = classifyKevsByWindow(relevantVulnerabilities, evidenceWindow, { generatedAt: state.intelligence.generatedAt });
   state.vulnerabilities = state.kevEvidence.inWindow;
 
-  const matchedSignals = matchCurrentSignals(state.currentSignalData.signals, sector, country);
-  state.signalEvidence = classifySignalsByWindow(matchedSignals, evidenceWindow, { generatedAt: state.intelligence.generatedAt });
-  state.currentSignals = [...state.signalEvidence.inWindow].sort((a, b) =>
-    String(b.publishedAt).localeCompare(String(a.publishedAt)) || a.entityName.localeCompare(b.entityName));
+  const matchedReports = matchCurrentReports(state.currentReportData.reports, state.profile);
+  state.reportEvidence = classifyReportsByWindow(matchedReports, evidenceWindow, { generatedAt: state.currentReportData.generatedAt || state.intelligence.generatedAt });
+  state.currentReports = state.reportEvidence.inWindow;
+  state.currentEntities = groupCurrentEntities(state.currentReports);
 
   state.actorVisible = Math.max(10, state.focusSelection.actualCount);
   state.techniqueVisible = 20;
@@ -1052,7 +1049,7 @@ function buildProfile({ announceResult = false, pushHistory = false } = {}) {
   if (pushHistory) updateUrl("push");
   else updateUrl("replace");
   if (announceResult) {
-    const message = `Threat profile built for ${profileName()}. ${focusLabel()} drives ${state.techniques.length} techniques; ${state.currentSignals.length} dated signals fall inside ${evidenceWindowLabel()}.`;
+    const message = `OSINT brief built for ${profileName()}. ${state.currentReports.length} public reports and ${state.currentEntities.length} named entities fall inside ${evidenceWindowLabel()}.`;
     announce(message);
     elements.profileTitle.focus();
   }
@@ -1093,21 +1090,21 @@ async function initialise() {
   elements.main.setAttribute("aria-busy", "true");
   elements.error.hidden = true;
   try {
-    const [response, signalResponse] = await Promise.all([
+    const [response, reportResponse] = await Promise.all([
       fetch("./data/intelligence.json", { cache: "no-store" }),
-      fetch("./data/sources/current-threat-signals.json", { cache: "no-store" }),
+      fetch("./data/sources/current-reports.json", { cache: "no-store" }),
     ]);
     if (!response.ok) throw new Error(`Dataset request returned ${response.status}.`);
-    if (!signalResponse.ok) throw new Error(`Current-signal request returned ${signalResponse.status}.`);
-    const [intelligence, currentSignalData] = await Promise.all([response.json(), signalResponse.json()]);
+    if (!reportResponse.ok) throw new Error(`Current-report request returned ${reportResponse.status}.`);
+    const [intelligence, currentReportData] = await Promise.all([response.json(), reportResponse.json()]);
     if (intelligence.schemaVersion !== 2 || !Array.isArray(intelligence.actors) || intelligence.actors.length < 100) {
       throw new Error("The validated intelligence snapshot is unavailable.");
     }
-    if (currentSignalData.schemaVersion !== 1 || !Array.isArray(currentSignalData.signals)) {
-      throw new Error("The curated current-signal layer is unavailable.");
+    if (currentReportData.schemaVersion !== 1 || !Array.isArray(currentReportData.reports)) {
+      throw new Error("The automated current-report layer is unavailable.");
     }
     state.intelligence = intelligence;
-    state.currentSignalData = currentSignalData;
+    state.currentReportData = currentReportData;
     populateFilters();
     renderHealth();
     readProfileFromUrl();
@@ -1238,7 +1235,7 @@ elements.modelActorSelect.addEventListener("change", () => {
 });
 
 elements.shareProfile.addEventListener("click", () => {
-  copyText(currentUrl().toString(), "Share link copied. Organisation and technology context were excluded for privacy.");
+  copyText(currentUrl().toString(), "Share link copied. Organisation, technology and watchlist context were excluded for privacy.");
 });
 
 elements.exportProfile.addEventListener("click", () => {
@@ -1252,17 +1249,18 @@ elements.exportProfile.addEventListener("click", () => {
       profileFit: "specificity-weighted sector and country context",
       confidence: "separate from profile fit; historical aggregate targeting context requires validation against current intelligence",
       analysisFocus: "approved Top-N actor cohort with every score tie at the cutoff retained; downstream techniques, software, campaigns and KQL priorities are recalculated from this cohort",
-      datedEvidenceWindow: "campaigns use ATT&CK last_seen, KEV uses CISA dateAdded, and current signals use source publishedAt; undated actor targeting and ATT&CK relationships are not filtered",
+      datedEvidenceWindow: "public reports use source publishedAt, campaigns use ATT&CK last_seen, and KEV uses CISA dateAdded; undated actor targeting and ATT&CK relationships are not filtered",
       techniqueScore: "minimum of weighted and documentation-adjusted actor coverage",
       campaignRecency: "ATT&CK last_seen only; catalogue modified dates are never substituted",
       kevExposure: "keyword matches are possible matches, never confirmed exposure",
-      signalRecency: "publishedAt is evidence-publication recency, not necessarily an activity date",
+      reportRecency: "publishedAt is report-publication recency, not necessarily an activity date",
     },
     sourceHealth: state.intelligence.health,
     coverage: state.intelligence.coverage,
     privacy: {
       containsOrganisationContext: Boolean(state.profile.organisation),
       containsTechnologyContext: Boolean(state.profile.technology),
+      containsWatchlistContext: Boolean(state.profile.watchlist),
       sharingNotice: "This complete export may contain user-entered context. Review it before sharing.",
     },
     profile: {
@@ -1270,6 +1268,7 @@ elements.exportProfile.addEventListener("click", () => {
       sector: state.profile.sector,
       country: state.profile.country,
       technology: state.profile.technology || null,
+      watchlist: state.profile.watchlist || null,
       evidenceWindow: state.campaignEvidence.window,
       analysisFocus: {
         requestedCount: state.focusSelection.requestedCount,
@@ -1285,15 +1284,16 @@ elements.exportProfile.addEventListener("click", () => {
         allCandidates: state.rankedActors,
         analysisFocus: state.focusActors,
       },
-      currentSignals: {
+      currentReporting: {
         sourceMetadata: {
-          reviewedAt: state.currentSignalData.reviewedAt,
-          methodology: state.currentSignalData.methodology,
-          evidenceTiers: state.currentSignalData.evidenceTiers,
+          generatedAt: state.currentReportData.generatedAt,
+          methodology: state.currentReportData.methodology,
+          sources: state.currentReportData.sources,
         },
-        inWindow: state.currentSignals,
-        excluded: state.signalEvidence.excluded,
-        allProfileMatches: state.signalEvidence.all,
+        inWindow: state.currentReports,
+        entities: state.currentEntities,
+        excluded: state.reportEvidence.excluded,
+        allProfileMatches: state.reportEvidence.all,
       },
       campaigns: {
         inWindow: state.campaigns,
@@ -1309,7 +1309,7 @@ elements.exportProfile.addEventListener("click", () => {
       },
     },
   });
-  showFeedback(state.profile.organisation || state.profile.technology
+  showFeedback(state.profile.organisation || state.profile.technology || state.profile.watchlist
     ? "Complete profile exported. It includes entered context—review it before sharing."
     : "Complete profile exported.");
 });

@@ -169,8 +169,117 @@ export function classifyKevsByWindow(vulnerabilities, preset, options = {}) {
   return partitionDatedEvidence(vulnerabilities, "dateAdded", preset, options);
 }
 
-export function classifySignalsByWindow(signals, preset, options = {}) {
-  return partitionDatedEvidence(signals, "publishedAt", preset, options);
+export function classifyReportsByWindow(reports, preset, options = {}) {
+  return partitionDatedEvidence(reports, "publishedAt", preset, options);
+}
+
+function privateTerms(value) {
+  return unique(String(value || "")
+    .split(",")
+    .map((term) => normaliseString(term))
+    .filter((term) => term.length >= 2));
+}
+
+function textMatches(text, terms) {
+  const haystack = ` ${normaliseString(text).replace(/[^a-z0-9]+/g, " ").trim()} `;
+  return terms.filter((term) => haystack.includes(` ${term.replace(/[^a-z0-9]+/g, " ")} `));
+}
+
+export function matchCurrentReports(reports, profile = {}) {
+  const organisationTerms = privateTerms(profile.organisation);
+  const technologyTerms = privateTerms(profile.technology);
+  const watchlistTerms = privateTerms(profile.watchlist);
+
+  return (reports || [])
+    .map((report) => {
+      const searchable = `${report.title || ""} ${report.summary || ""} ${(report.entities || []).map((entry) => entry.name).join(" ")}`;
+      const organisationMatches = textMatches(searchable, organisationTerms);
+      const technologyMatches = textMatches(searchable, technologyTerms);
+      const watchlistMatches = textMatches(searchable, watchlistTerms);
+      const sectorMatch = (report.sectors || []).includes(profile.sector);
+      const countryMatch = (report.countries || []).includes(profile.country);
+
+      let evidenceClass = null;
+      let evidenceLabel = null;
+      let relevanceScore = 0;
+      let explanation = null;
+      if (organisationMatches.length) {
+        evidenceClass = "direct-mention";
+        evidenceLabel = "Organisation mention";
+        relevanceScore = 100;
+        explanation = `The source text mentions ${organisationMatches.join(", ")}. This is not proof of compromise or deliberate targeting.`;
+      } else if (sectorMatch && countryMatch) {
+        evidenceClass = "observed-context";
+        evidenceLabel = "Sector + country context";
+        relevanceScore = 85;
+        explanation = "The same dated report contains both the selected sector and country context.";
+      } else if (sectorMatch && technologyMatches.length) {
+        evidenceClass = "technology-context";
+        evidenceLabel = "Sector + technology context";
+        relevanceScore = 75;
+        explanation = `The report matches the selected sector and mentions ${technologyMatches.join(", ")}.`;
+      } else if (sectorMatch) {
+        evidenceClass = "sector-context";
+        evidenceLabel = "Sector relevance";
+        relevanceScore = 60;
+        explanation = "The dated report matches the selected sector; country-specific targeting is not established.";
+      } else if (watchlistMatches.length) {
+        evidenceClass = "watchlist-mention";
+        evidenceLabel = "Watchlist mention";
+        relevanceScore = 50;
+        explanation = `The report mentions analyst watchlist term ${watchlistMatches.join(", ")}; profile targeting is not established.`;
+      } else {
+        return null;
+      }
+
+      return {
+        ...report,
+        sectorMatch,
+        countryMatch,
+        organisationMatches,
+        technologyMatches,
+        watchlistMatches,
+        evidenceClass,
+        evidenceLabel,
+        relevanceScore,
+        explanation,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.relevanceScore - a.relevanceScore ||
+      String(b.publishedAt || "").localeCompare(String(a.publishedAt || "")) ||
+      a.title.localeCompare(b.title));
+}
+
+export function groupCurrentEntities(reports) {
+  const grouped = new Map();
+  for (const report of reports || []) {
+    for (const entity of report.entities || []) {
+      const current = grouped.get(entity.id) || {
+        ...entity,
+        reportIds: [],
+        sourceNames: new Set(),
+        latestPublishedAt: null,
+        bestEvidenceClass: null,
+        bestEvidenceLabel: null,
+        relevanceScore: 0,
+      };
+      current.reportIds.push(report.id);
+      current.sourceNames.add(report.source?.name);
+      if (!current.latestPublishedAt || String(report.publishedAt || "") > current.latestPublishedAt) {
+        current.latestPublishedAt = report.publishedAt;
+      }
+      if ((report.relevanceScore || 0) > current.relevanceScore) {
+        current.relevanceScore = report.relevanceScore;
+        current.bestEvidenceClass = report.evidenceClass;
+        current.bestEvidenceLabel = report.evidenceLabel;
+      }
+      grouped.set(entity.id, current);
+    }
+  }
+  return [...grouped.values()]
+    .map((entry) => ({ ...entry, reportCount: entry.reportIds.length, sourceNames: [...entry.sourceNames].filter(Boolean) }))
+    .sort((a, b) => b.relevanceScore - a.relevanceScore || b.reportCount - a.reportCount || a.name.localeCompare(b.name));
 }
 
 export function normalizeTopFocus(value, fallback = 10) {
@@ -486,7 +595,7 @@ export function navigatorLayer(profileName, techniques, attackVersion, scope = {
     name: profileName,
     versions,
     domain: "enterprise-attack",
-    description: `ATT&CK techniques ranked by documentation-adjusted profile coverage${scope.focus ? ` for ${scope.focus}` : ""}. This is relevance, not likelihood or detection efficacy. ATT&CK actor-technique relationships are undated${scope.evidenceWindow ? `; the ${scope.evidenceWindow} dated-evidence window applies only to supporting campaign, signal and KEV context` : ""}.`,
+    description: `ATT&CK techniques ranked by documentation-adjusted profile coverage${scope.focus ? ` for ${scope.focus}` : ""}. This is relevance, not likelihood or detection efficacy. ATT&CK actor-technique relationships are undated${scope.evidenceWindow ? `; the ${scope.evidenceWindow} dated-evidence window applies only to supporting report, campaign and KEV context` : ""}.`,
     techniques: techniques.map((technique) => ({
       techniqueID: technique.id,
       score: Math.max(1, Math.round(technique.techniqueScore || 0)),
